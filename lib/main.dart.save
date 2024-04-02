@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-// import 'package:flutter/cupertino.dart';
-import 'dart:io' as io show Platform ;
 
 void main() {
-  var platform = io.Platform.operatingSystem;
-  print(platform);
   runApp(const MyApp());
 }
 
