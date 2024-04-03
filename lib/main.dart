@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 // import 'package:flutter/cupertino.dart';
-import 'dart:io' as io show Platform ;
+import 'dart:io' as io show Platform;
+import 'package:provider/provider.dart';
 
 
 /// Point d'entré de l'application
@@ -16,18 +17,24 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'PlantPilot App',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
-        useMaterial3: true
-      ),
-      home: const LoginPage(title: 'PlantPilot Login'),
+    return ChangeNotifierProvider(  // a modifier
+        create: (context) => MyAppState(),
+        child: MaterialApp(
+          title: 'PlantPilot App',
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
+            useMaterial3: true
+          ),
+          home: const LoginPage(title: 'PlantPilot Login'),
+        )
     );
   }
+}
+
+class MyAppState extends ChangeNotifier {
+
 }
 
 /// Widget LoginPage, Stateful car son état est susceptible de
@@ -138,3 +145,18 @@ class _LoginPageState extends State<LoginPage> {
   }
 }
 
+class HomePage extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
+    return TextButton(
+        style: TextButton.styleFrom(
+            backgroundColor: Colors.blue[50]
+        ),
+        onPressed: () {},
+        child: const Text("Créer un compte")
+    );
+  }
+  
+}
