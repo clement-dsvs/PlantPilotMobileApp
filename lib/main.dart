@@ -1,14 +1,18 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter/cupertino.dart';
 import 'dart:io' as io show Platform ;
 
+
+/// Point d'entré de l'application
 void main() {
   var platform = io.Platform.operatingSystem; //Get l'os hôte
   print(platform);
   runApp(const MyApp());
 }
 
+/// Widget root, définie le titre de l'application,
+/// le template de style et appel le Widget LoginPage
+/// Stateless car son etat ne change pas en cours d'éxecution
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -26,6 +30,8 @@ class MyApp extends StatelessWidget {
   }
 }
 
+/// Widget LoginPage, Stateful car son état est susceptible de
+/// changer au cours de l'éxecution
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key, required String title});
 
@@ -33,12 +39,14 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
+/// State associé au Widget LoginPage
 class _LoginPageState extends State<LoginPage> {
   String login = "";
   String password = "";
   final loginController = TextEditingController();
   final passwordController = TextEditingController();
 
+  /// Méthode qui va assigner aux propriétés les valeurs des TextField
   void _onLoginClick(login, password) {
     setState(() {
       this.login = login;
@@ -47,6 +55,7 @@ class _LoginPageState extends State<LoginPage> {
     print("${this.login} ${this.password}");
   }
 
+  /// Clean les TextField
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
