@@ -7,7 +7,10 @@ import 'package:provider/provider.dart';
 /// Point d'entré de l'application
 void main() {
   var platform = io.Platform.operatingSystem; //Get l'os hôte
-  print(platform);
+  //print(platform);
+  // runApp(const MaterialApp(
+  //   home: MyApp()
+  // ));
   runApp(const MyApp());
 }
 
@@ -27,7 +30,7 @@ class MyApp extends StatelessWidget {
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
             useMaterial3: true
           ),
-          home: const LoginPage(title: 'PlantPilot Login'),
+          home: const LoginPage(),
         )
     );
   }
@@ -40,7 +43,7 @@ class MyAppState extends ChangeNotifier {
 /// Widget LoginPage, Stateful car son état est susceptible de
 /// changer au cours de l'éxecution
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key, required String title});
+  const LoginPage({super.key});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -50,16 +53,18 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   String login = "";
   String password = "";
+  String loginAttempt = "";
   final loginController = TextEditingController();
   final passwordController = TextEditingController();
 
   /// Méthode qui va assigner aux propriétés les valeurs des TextField
-  void _onLoginClick(login, password) {
+  bool _onLoginClick(login, password) {
     setState(() {
       this.login = login;
       this.password = password;
     });
     print("${this.login} ${this.password}");
+    return true;  // return true temporaire, devra faire un call API pour vérifier le login
   }
 
   /// Clean les TextField
@@ -107,14 +112,24 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-            Padding(padding: EdgeInsets.all(10)),
+            Padding(padding: EdgeInsets.all(5)),
+            SizedBox(
+              child: Text(loginAttempt, style: const TextStyle(color: Colors.red))
+            ),
+            Padding(padding: EdgeInsets.all(5)),
             SizedBox(
               child: TextButton(
                 style: TextButton.styleFrom(
                   backgroundColor: Colors.blue[50]
                 ),
                   onPressed: () {
-                    _onLoginClick(loginController.text, passwordController.text);
+                    if (_onLoginClick(loginController.text, passwordController.text)) {
+                      loginAttempt = "";
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => const HomePage())); // à modifier par pushReplacement pour empecher le retour à la page de login
+                    } else {
+                      loginAttempt = "Le login et/ou le mot de passe n'est pas valide.";
+                    }
                   },
                   child: const Text("Se connecter")),
             ),
@@ -146,17 +161,12 @@ class _LoginPageState extends State<LoginPage> {
 }
 
 class HomePage extends StatelessWidget {
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    return TextButton(
-        style: TextButton.styleFrom(
-            backgroundColor: Colors.blue[50]
-        ),
-        onPressed: () {},
-        child: const Text("Créer un compte")
-    );
+    return const Scaffold(
+        body: Text("TEST"));
   }
-  
 }
