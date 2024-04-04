@@ -6,12 +6,15 @@ import 'package:provider/provider.dart';
 
 /// Point d'entré de l'application
 void main() {
-  var platform = io.Platform.operatingSystem; //Get l'os hôte
   //print(platform);
   // runApp(const MaterialApp(
   //   home: MyApp()
   // ));
   runApp(const MyApp());
+}
+
+class Tools {
+  var platform = io.Platform.operatingSystem; //Get l'os hôte
 }
 
 /// Widget root, définie le titre de l'application,
@@ -170,3 +173,5 @@ class HomePage extends StatelessWidget {
         body: Text("TEST"));
   }
 }
+
+// Une fois logué : Menu navigation en haut (dashboard, mes presets, mon compte, forum), Dashboard au centre (tuile pour chaque pot(niv batterie, niv d'eau, datetime dernier arrosage))
