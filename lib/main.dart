@@ -165,12 +165,47 @@ class _LoginPageState extends State<LoginPage> {
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
+  static const pageItems = [
+    "Dashboard",
+    "MyPresets",
+    "Forum",
+    "MyAccount",
+  ];
 
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    return const Scaffold(
-        body: Text("TEST"));
+    return MaterialApp(
+        home: Scaffold(
+          appBar: AppBar(
+            title: Text('PlantPilot'),
+          ),
+            drawer: Drawer(
+              child: ListView(
+                children: <Widget>[
+                  const DrawerHeader(
+                    decoration: BoxDecoration(
+                      color: Colors.blue,
+                    ),
+                    child: Text('Menu'),
+                  ),
+                  for (final item in pageItems)
+                    ListTile(
+                      title: Text(item),
+                      onTap: () {
+                        // Update the state of the app
+                        // Then close the drawer
+                        Navigator.pop(context);
+                      },
+                    ),
+                ],
+              ),
+            ),
+          body: Center(
+              child: Text("TEST")
+          )
+        )
+    );
   }
 }
 
