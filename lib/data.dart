@@ -1,7 +1,7 @@
 library local_data;
 
 class LocalData {
-  static const account = {
+  var account = {
     "username": "roo",
     "password": "toor",
     "email": "ose",
@@ -9,13 +9,13 @@ class LocalData {
     "isAdmin": false
   };
 
-  static const plantPilot = [
+  var plantPilot = [
     {"id": "1234",
       "status": "active",
       "last_message": "2000-01-01 00:00:00"}
   ];
 
-  static const pots = [
+  var pots = [
     {
       "id": "123",
       "status": "active",

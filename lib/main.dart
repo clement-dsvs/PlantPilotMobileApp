@@ -205,13 +205,21 @@ class HomePage extends StatelessWidget {
               ),
             ),
           body: Column(
-            children: [
-              Text("merde"),
-              Row(
-                children: [],
+            children: <Widget>[
+              for (final item in data.plantPilot)
+                Text(item["id"]! + item["status"]! + item["last_message"]!),
+              for (var item in data.pots)
+                Row(
+                  children: <Widget>[
+                    Text(
+                        ("id: ${item["plantpilot_id"]! as String} \n") +
+                        ("statut: ${item['status']! as String} \n") +
+                        ("niveau d'eau: ${item['water_level'].toString()} \n") +
+                        ("niveau de batterie: ${item["battery_level"].toString()} \n") +
+                        ("dernière utilisation: ${item["last_usage"]! as String} \n")
+                    )
+                  ],
               ),
-              Row(
-                  children: [])
             ]
           )
         )
