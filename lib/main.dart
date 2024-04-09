@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 // import 'package:flutter/cupertino.dart';
-import 'dart:io' as io show Platform;
 import 'package:provider/provider.dart';
+import 'package:plantpilot_mobile_app/tools.dart';
+import 'package:plantpilot_mobile_app/http.dart';
 
+var tools = Tools();
+var http = Http();
+var res = http.fetchAlbum();
 
 /// Point d'entré de l'application
 void main() {
@@ -13,9 +17,6 @@ void main() {
   runApp(const MyApp());
 }
 
-class Tools {
-  var platform = io.Platform.operatingSystem; //Get l'os hôte
-}
 
 /// Widget root, définie le titre de l'application,
 /// le template de style et appel le Widget LoginPage
@@ -175,6 +176,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
+    print(res.toString());
     return MaterialApp(
         home: Scaffold(
           appBar: AppBar(
