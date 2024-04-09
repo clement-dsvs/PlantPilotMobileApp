@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 // import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
-import 'package:plantpilot_mobile_app/tools.dart';
-import 'package:plantpilot_mobile_app/http.dart';
+//import 'package:plantpilot_mobile_app/tools.dart';
+//import 'package:plantpilot_mobile_app/http.dart';
+import "package:plantpilot_mobile_app/data.dart";
 
-var tools = Tools();
-var http = Http();
-var res = http.fetchAlbum();
+//var tools = Tools();
+//var http = Http();
+//var res = http.fetchAlbum();
+var data = LocalData();
 
 /// Point d'entré de l'application
 void main() {
@@ -176,7 +178,6 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    print(res.toString());
     return MaterialApp(
         home: Scaffold(
           appBar: AppBar(
@@ -203,12 +204,17 @@ class HomePage extends StatelessWidget {
                 ],
               ),
             ),
-          body: Center(
-              child: Text("TEST")
+          body: Column(
+            children: [
+              Text("merde"),
+              Row(
+                children: [],
+              ),
+              Row(
+                  children: [])
+            ]
           )
         )
     );
   }
 }
-
-// Une fois logué : Menu navigation en haut (dashboard, mes presets, mon compte, forum), Dashboard au centre (tuile pour chaque pot(niv batterie, niv d'eau, datetime dernier arrosage))
