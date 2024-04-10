@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 // import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 //import 'package:plantpilot_mobile_app/tools.dart';
@@ -178,7 +180,46 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
+    List<Widget> plantPilot = [];
+    List<Widget> pots = [];
+    for (final item in data.plantPilot) {
+      plantPilot.add(
+        Center(child:
+          Card(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              child: Column(
+                children: <Widget>[
+                  ListTile(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                    tileColor: item["status"]! == "active" ? Colors.blue[300] : Colors.red[300],
+                    leading: Icon(item["status"]! == "active" ? Icons.check_circle : Icons.close),
+                    title: Text("PlantPilot ID : ${item["id"]!}"),
+                    subtitle: Text("Dernier message : ${item["last_message"]!}"),
+                  )
+                ]
+              )
+        )
+      ));
+    }
+    for (final item in data.pots) {
+      pots.add(
+          ListTile(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            tileColor: item["status"]! == "active" ? Colors.green[300] : Colors.orange[300],
+            leading: Icon(item["status"]! == "active" ? Icons.check_circle : Icons.close),
+            title: Text(style: TextStyle(
+              fontSize: 12
+            ), "Identifiant pot : ${item["id"]!}"),
+            subtitle: Text(style: TextStyle(
+              fontSize: 10
+            ), "Niveau d'eau : ${item['water_level']}\nNiveau de batterie : ${item["battery_level"]}\nID PlantPilot : ${item["plantpilot_id"]}\nDernière action : ${item["last_usage"]!}"),
+          )
+      );
+    }
     return MaterialApp(
+      theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
+          useMaterial3: true
+      ),
         home: Scaffold(
           appBar: AppBar(
             title: Text('PlantPilot'),
@@ -204,23 +245,24 @@ class HomePage extends StatelessWidget {
                 ],
               ),
             ),
-          body: Column(
-            children: <Widget>[
-              for (final item in data.plantPilot)
-                Text(item["id"]! + item["status"]! + item["last_message"]!),
-              for (var item in data.pots)
-                Row(
-                  children: <Widget>[
-                    Text(
-                        ("id: ${item["plantpilot_id"]! as String} \n") +
-                        ("statut: ${item['status']! as String} \n") +
-                        ("niveau d'eau: ${item['water_level'].toString()} \n") +
-                        ("niveau de batterie: ${item["battery_level"].toString()} \n") +
-                        ("dernière utilisation: ${item["last_usage"]! as String} \n")
-                    )
-                  ],
-              ),
-            ]
+          body: SingleChildScrollView(
+            child: Column(
+                children: plantPilot +
+                    [Divider(color: Colors.grey[800])] +
+                    [
+                      ///TODO: bugfix
+                      for (int i = 0; i < pots.length; i += 2)
+                        Row(
+                          children: [
+                            if (pots.length - i == 0)
+                              Expanded(flex:1, child: Container(child: pots[i]))
+                            else
+                              Expanded(flex:1, child: Container(child: pots[i])),
+                              Expanded(flex:1, child: Container(child: pots[i+1]))
+                          ],
+                        )
+                    ]
+            ),
           )
         )
     );
