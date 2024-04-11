@@ -1,6 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 // import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 //import 'package:plantpilot_mobile_app/tools.dart';
@@ -171,10 +170,10 @@ class _LoginPageState extends State<LoginPage> {
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
   static const pageItems = [
-    "Dashboard",
-    "MyPresets",
-    "Forum",
-    "MyAccount",
+    {"Dashboard": Icon(Icons.home)},
+    {"Presets": Icon(Icons.precision_manufacturing)},
+    {"Forum": Icon(Icons.forum)},
+    {"Mon compte": Icon(Icons.person)}
   ];
 
   @override
@@ -182,37 +181,54 @@ class HomePage extends StatelessWidget {
     var appState = context.watch<MyAppState>();
     List<Widget> plantPilot = [];
     List<Widget> pots = [];
+    List<Widget> menuTile = [];
     for (final item in data.plantPilot) {
       plantPilot.add(
-        Center(child:
-          Card(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-              child: Column(
-                children: <Widget>[
-                  ListTile(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                    tileColor: item["status"]! == "active" ? Colors.blue[300] : Colors.red[300],
-                    leading: Icon(item["status"]! == "active" ? Icons.check_circle : Icons.close),
-                    title: Text("PlantPilot ID : ${item["id"]!}"),
-                    subtitle: Text("Dernier message : ${item["last_message"]!}"),
-                  )
-                ]
+          Center(child:
+            Card(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+              child:
+              ListTile(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+                tileColor: item["status"]! == "active" ? Colors.green[300] : Colors.grey[300],
+                leading: Icon(item["status"]! == "active" ? Icons.check_circle : Icons.close),
+                title: Text("PlantPilot ID : ${item["id"]!}"),
+                subtitle: Text("Dernier message : ${item["last_message"]!}")
               )
-        )
-      ));
+          )
+          )
+      );
     }
     for (final item in data.pots) {
       pots.add(
           ListTile(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            tileColor: item["status"]! == "active" ? Colors.green[300] : Colors.orange[300],
+            tileColor: item["status"]! == "active" ? Colors.blue[100] : Colors.red[100],
             leading: Icon(item["status"]! == "active" ? Icons.check_circle : Icons.close),
-            title: Text(style: TextStyle(
+            title: Text(style: const TextStyle(
               fontSize: 12
             ), "Identifiant pot : ${item["id"]!}"),
-            subtitle: Text(style: TextStyle(
+            subtitle: Text(style: const TextStyle(
               fontSize: 10
             ), "Niveau d'eau : ${item['water_level']}\nNiveau de batterie : ${item["battery_level"]}\nID PlantPilot : ${item["plantpilot_id"]}\nDernière action : ${item["last_usage"]!}"),
           )
+      );
+    }
+    for (final item in pageItems) {
+      var k = item.keys.first;
+      var v = item.values.first;
+      menuTile.add(ListTile(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+        tileColor: Colors.grey[300],
+        leading: v,
+        title: Text(k, textAlign: TextAlign.right),
+        onTap: () {
+          // Update the state of the app
+          // Then close the drawer
+          //Navigator.pop(context);
+          print(item);
+          throw UnimplementedError();
+        },
+      )
       );
     }
     return MaterialApp(
@@ -222,7 +238,9 @@ class HomePage extends StatelessWidget {
       ),
         home: Scaffold(
           appBar: AppBar(
-            title: Text('PlantPilot'),
+            title: const Text('PlantPilot'),
+            centerTitle: true,
+            backgroundColor: Colors.blue,
           ),
             drawer: Drawer(
               child: ListView(
@@ -233,38 +251,27 @@ class HomePage extends StatelessWidget {
                     ),
                     child: Text('Menu'),
                   ),
-                  for (final item in pageItems)
-                    ListTile(
-                      title: Text(item),
-                      onTap: () {
-                        // Update the state of the app
-                        // Then close the drawer
-                        Navigator.pop(context);
-                      },
-                    ),
-                ],
+                ] + menuTile,
               ),
             ),
           body: SingleChildScrollView(
-            child: Column(
-                children: plantPilot +
-                    [Divider(color: Colors.grey[800])] +
-                    [
-                      ///TODO: bugfix
-                      for (int i = 0; i < pots.length; i += 2)
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[const Center(child: Row(children: [Icon(Icons.arrow_downward), Text("Mes PlantPilot"), Icon(Icons.arrow_downward)]))] +
+                      plantPilot + [Divider(color: Colors.grey[400])] +
+                      <Widget>[const Center(child: Row(children: [Icon(Icons.arrow_downward), Text("Mes pots de fleurs"), Icon(Icons.arrow_downward)]))] +
+                    [///TODO: bugfix
+                      for (final item in pots)
                         Row(
                           children: [
-                            if (pots.length - i == 0)
-                              Expanded(flex:1, child: Container(child: pots[i]))
-                            else
-                              Expanded(flex:1, child: Container(child: pots[i])),
-                              Expanded(flex:1, child: Container(child: pots[i+1]))
+                              Expanded(flex:1, child: Container(child: item))
                           ],
                         )
                     ]
-            ),
+              ),
+            )
           )
-        )
     );
   }
 }

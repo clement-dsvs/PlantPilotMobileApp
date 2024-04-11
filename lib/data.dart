@@ -13,7 +13,7 @@ class LocalData {
     {"id": "1234",
       "status": "active",
       "last_message": "2000-01-01 00:00:00"},
-    {"id": "1234",
+    {"id": "4567",
       "status": "inactive",
       "last_message": "2000-01-01 00:00:00"}
   ];
