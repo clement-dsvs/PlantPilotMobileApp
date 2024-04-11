@@ -191,8 +191,17 @@ class HomePage extends StatelessWidget {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
                 tileColor: item["status"]! == "active" ? Colors.green[300] : Colors.grey[300],
                 leading: Icon(item["status"]! == "active" ? Icons.check_circle : Icons.close),
-                title: Text("PlantPilot ID : ${item["id"]!}"),
-                subtitle: Text("Dernier message : ${item["last_message"]!}")
+                title: Text("PlantPilot ID : ${item["id"]!}",
+                  style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                  )
+                ),
+                subtitle: Text("Dernier message : ${item["last_message"]!}",
+                    style: const TextStyle(
+                        fontSize: 12,
+                        fontStyle: FontStyle.italic
+                    ))
               )
           )
           )
@@ -205,10 +214,12 @@ class HomePage extends StatelessWidget {
             tileColor: item["status"]! == "active" ? Colors.blue[100] : Colors.red[100],
             leading: Icon(item["status"]! == "active" ? Icons.check_circle : Icons.close),
             title: Text(style: const TextStyle(
-              fontSize: 12
+              fontSize: 16,
+              fontWeight: FontWeight.bold
             ), "Identifiant pot : ${item["id"]!}"),
             subtitle: Text(style: const TextStyle(
-              fontSize: 10
+              fontSize: 12,
+                fontStyle: FontStyle.italic
             ), "Niveau d'eau : ${item['water_level']}\nNiveau de batterie : ${item["battery_level"]}\nID PlantPilot : ${item["plantpilot_id"]}\nDernière action : ${item["last_usage"]!}"),
           )
       );
@@ -261,11 +272,11 @@ class HomePage extends StatelessWidget {
                   children: <Widget>[const Center(child: Row(children: [Icon(Icons.arrow_downward), Text("Mes PlantPilot"), Icon(Icons.arrow_downward)]))] +
                       plantPilot + [Divider(color: Colors.grey[400])] +
                       <Widget>[const Center(child: Row(children: [Icon(Icons.arrow_downward), Text("Mes pots de fleurs"), Icon(Icons.arrow_downward)]))] +
-                    [///TODO: bugfix
+                    [
                       for (final item in pots)
                         Row(
                           children: [
-                              Expanded(flex:1, child: Container(child: item))
+                              Expanded(flex:2, child: Container(child: item))
                           ],
                         )
                     ]
