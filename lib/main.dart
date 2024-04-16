@@ -1,23 +1,18 @@
 import 'package:flutter/material.dart';
-
 // import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
-
-//import 'package:plantpilot_mobile_app/tools.dart';
-//import 'package:plantpilot_mobile_app/http.dart';
+import 'package:plantpilot_mobile_app/tools.dart';
+import 'package:plantpilot_mobile_app/http.dart';
 import "package:plantpilot_mobile_app/data.dart";
 
-//var tools = Tools();
-//var http = Http();
-//var res = http.fetchAlbum();
+
 var data = LocalData();
+var appTools = Tools();
+var httpRequest = Http();
+
 
 /// Point d'entré de l'application
 void main() {
-  //print(platform);
-  // runApp(const MaterialApp(
-  //   home: MyApp()
-  // ));
   runApp(const MyApp());
 }
 
@@ -30,7 +25,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      // a modifier
         create: (context) => MyAppState(),
         child: MaterialApp(
           title: 'PlantPilot App',
@@ -63,12 +57,13 @@ class _LoginPageState extends State<LoginPage> {
   final passwordController = TextEditingController();
 
   /// Méthode qui va assigner aux propriétés les valeurs des TextField
-  bool _onLoginClick(login, password) {
+  Future<bool> _onLoginClick(login, password) async {
     setState(() {
       this.login = login;
       this.password = password;
     });
-    print("${this.login} ${this.password}");
+    var response = await httpRequest.login(this.login, this.password);
+    print(response);
     return true; // return true temporaire, devra faire un call API pour vérifier le login
   }
 
@@ -124,8 +119,8 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(
                 child: TextButton(
                     style: TextButton.styleFrom(backgroundColor: Colors.blue[50]),
-                    onPressed: () {
-                      if (_onLoginClick(
+                    onPressed: () async {
+                      if (await _onLoginClick(
                           loginController.text, passwordController.text)) {
                         loginAttempt = "";
                         Navigator.pop(context); //empéche le retour à cette vue

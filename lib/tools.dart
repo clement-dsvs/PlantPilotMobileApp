@@ -4,4 +4,8 @@ import 'dart:io' as io show Platform;
 
 class Tools {
   var platform = io.Platform.operatingSystem; //Get l'os hôte
+  var app = "dev";
+  Tools() {
+    print(platform);
+  }
 }
