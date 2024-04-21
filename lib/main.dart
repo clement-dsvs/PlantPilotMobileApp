@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 // import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
@@ -5,11 +7,9 @@ import 'package:plantpilot_mobile_app/tools.dart';
 import 'package:plantpilot_mobile_app/http.dart';
 import "package:plantpilot_mobile_app/data.dart";
 
-
 var data = LocalData();
 var appTools = Tools();
 var httpRequest = Http();
-
 
 /// Point d'entré de l'application
 void main() {
@@ -32,8 +32,7 @@ class MyApp extends StatelessWidget {
               colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
               useMaterial3: true),
           home: const LoginPage(),
-        )
-    );
+        ));
   }
 }
 
@@ -63,8 +62,13 @@ class _LoginPageState extends State<LoginPage> {
       this.password = password;
     });
     var response = await httpRequest.login(this.login, this.password);
-    print(response);
-    return true; // return true temporaire, devra faire un call API pour vérifier le login
+    var json = (jsonDecode(response) as List).cast<Map<String, dynamic>>();
+    //return true; // return true temporaire, devra faire un call API pour vérifier le login
+    if (json["allowed"]) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   /// Clean les TextField
@@ -230,8 +234,10 @@ class HomePage extends StatelessWidget {
               style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
               "Niveau d'eau : ${item['water_level']}\nNiveau de batterie : ${item["battery_level"]}\nID PlantPilot : ${item["plantpilot_id"]}\nDernière action : ${item["last_usage"]!}"),
           onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => ItemDetailPage(item: item)));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ItemDetailPage(item: item)));
           }));
     }
     for (final item in pageItems) {
@@ -352,39 +358,36 @@ class ItemDetailPage extends StatelessWidget {
         },
       ));
     }
-    print(item["type"]);
     if (item["type"] == "base") {
       diplayedItem.add(ListTile(
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(50)),
+          shape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
           tileColor: item["status"]! == "active"
               ? Colors.green[300]
               : Colors.grey[300],
-          leading: Icon(item["status"]! == "active"
-              ? Icons.check_circle
-              : Icons.close),
+          leading: Icon(
+              item["status"]! == "active" ? Icons.check_circle : Icons.close),
           title: Text("PlantPilot ID : ${item["id"]!}",
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               )),
-          subtitle: Text("Statut : ${item["status"] == "active" ?  "Actif" : "Inactif"}\nDernier message : ${item["last_message"]!}",
-              style: const TextStyle(
-                  fontSize: 12, fontStyle: FontStyle.italic)
-          )
-      ));
+          subtitle: Text(
+              "Statut : ${item["status"] == "active" ? "Actif" : "Inactif"}\nDernier message : ${item["last_message"]!}",
+              style:
+              const TextStyle(fontSize: 12, fontStyle: FontStyle.italic))));
       diplayedItem.add(Divider(color: Colors.grey[400]));
       for (final element in data.pots) {
         if (item["id"] == element["plantpilot_id"]) {
           diplayedItem.add(ListTile(
-              shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-              tileColor:
-              element["status"]! == "active" ? Colors.blue[100] : Colors
-                  .red[100],
-              leading: Icon(
-                  element["status"]! == "active" ? Icons.check_circle : Icons
-                      .close),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)),
+              tileColor: element["status"]! == "active"
+                  ? Colors.blue[100]
+                  : Colors.red[100],
+              leading: Icon(element["status"]! == "active"
+                  ? Icons.check_circle
+                  : Icons.close),
               title: Text(
                   style: const TextStyle(
                       fontSize: 16, fontWeight: FontWeight.bold),
@@ -394,34 +397,28 @@ class ItemDetailPage extends StatelessWidget {
                       fontSize: 12, fontStyle: FontStyle.italic),
                   "Niveau d'eau : ${element['water_level']}\nNiveau de batterie : ${element["battery_level"]}\nID PlantPilot : ${element["plantpilot_id"]}\nDernière action : ${element["last_usage"]}"),
               onTap: () {
-                Navigator.push(context,
+                Navigator.push(
+                    context,
                     MaterialPageRoute(
                         builder: (context) => ItemDetailPage(item: element)));
-              })
-          );
+              }));
         }
       }
     } else if (item["type"] == "pot") {
       diplayedItem.add(ListTile(
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20)),
-          tileColor: item["status"]! == "active"
-              ? Colors.blue[100]
-              : Colors.red[100],
-          leading: Icon(item["status"]! == "active"
-              ? Icons.check_circle
-              : Icons.close),
+          shape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          tileColor:
+          item["status"]! == "active" ? Colors.blue[100] : Colors.red[100],
+          leading: Icon(
+              item["status"]! == "active" ? Icons.check_circle : Icons.close),
           title: Text(
-              style: const TextStyle(
-                  fontSize: 16, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               "Identifiant pot : ${item["id"]!}"),
           subtitle: Text(
-              style: const TextStyle(
-                  fontSize: 12, fontStyle: FontStyle.italic),
+              style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
               "Niveau d'eau : ${item['water_level']}\nNiveau de batterie : ${item["battery_level"]}\nID PlantPilot : ${item["plantpilot_id"]}\nDernière action : ${item["last_usage"]!}"),
-          onTap: () {
-          })
-      );
+          onTap: () {}));
     }
     return Scaffold(
         appBar: AppBar(
