@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 // import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
@@ -61,14 +59,14 @@ class _LoginPageState extends State<LoginPage> {
       this.login = login;
       this.password = password;
     });
-    var response = await httpRequest.login(this.login, this.password);
-    var json = (jsonDecode(response) as List).cast<Map<String, dynamic>>();
-    //return true; // return true temporaire, devra faire un call API pour vérifier le login
-    if (json["allowed"]) {
+    //var response = await httpRequest.login(this.login, this.password);
+    //var json = (jsonDecode(response) as List).cast<Map<String, dynamic>>();
+    return true; // return true temporaire, devra faire un call API pour vérifier le login
+    /*if (json["allowed"]) {
       return true;
     } else {
       return false;
-    }
+    }*/
   }
 
   /// Clean les TextField
@@ -339,6 +337,7 @@ class ItemDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Widget> menuTile = [];
     List<Widget> diplayedItem = [];
+    List<DropdownMenuEntry> presets = [];
     for (final item in pageItems) {
       var key = item.keys.first;
       var icon = item.values.first["icon"];
@@ -420,6 +419,11 @@ class ItemDetailPage extends StatelessWidget {
               "Niveau d'eau : ${item['water_level']}\nNiveau de batterie : ${item["battery_level"]}\nID PlantPilot : ${item["plantpilot_id"]}\nDernière action : ${item["last_usage"]!}"),
           onTap: () {}));
     }
+    for (final item in data.presets) {
+      presets.add(
+        DropdownMenuEntry(value: item, label: item["preset_name"] as String)
+      );
+    }
     return Scaffold(
         appBar: AppBar(
           title: const Text('PlantPilot'),
@@ -443,9 +447,17 @@ class ItemDetailPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: diplayedItem,
+            children: diplayedItem + [
+              if (item["type"] == "pot") DropdownMenu(dropdownMenuEntries: presets)
+          ]
           ),
-        ));
+        ),
+        floatingActionButton: item["type"] == "pot" ? FloatingActionButton(
+          onPressed: () => {},
+          tooltip: 'Créer un nouveau preset',
+          child: const Icon(Icons.add),
+        ) : null
+    );
   }
 }
 
@@ -545,7 +557,8 @@ class PresetsPage extends StatelessWidget {
           onPressed: () => {},
           tooltip: 'Créer un nouveau preset',
           child: const Icon(Icons.add),
-        ));
+        )
+    );
   }
 }
 
