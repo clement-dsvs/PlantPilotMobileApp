@@ -448,14 +448,21 @@ class ItemDetailPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: diplayedItem + [
-              if (item["type"] == "pot") DropdownMenu(dropdownMenuEntries: presets)
+              if (item["type"] == "pot")
+                DropdownMenu(dropdownMenuEntries: presets),
+      TextButton(
+          style: TextButton.styleFrom(backgroundColor: Colors.blue[50]),
+          onPressed: () {
+            throw UnimplementedError("A dev");
+          },
+          child: const Text("Arrosage manuel")),
           ]
           ),
         ),
         floatingActionButton: item["type"] == "pot" ? FloatingActionButton(
           onPressed: () => {},
           tooltip: 'Créer un nouveau preset',
-          child: const Icon(Icons.add),
+          child: const Icon(Icons.save),
         ) : null
     );
   }
