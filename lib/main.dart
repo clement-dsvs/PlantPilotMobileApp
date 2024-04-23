@@ -95,29 +95,29 @@ class _LoginPageState extends State<LoginPage> {
                 width: 300,
                 child: TextField(
                   controller: loginController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     hintText: 'Login ou adresse mail',
                   ),
                 ),
               ),
-              Padding(padding: EdgeInsets.all(5)),
+              const Padding(padding: EdgeInsets.all(5)),
               SizedBox(
                 height: 50,
                 width: 300,
                 child: TextField(
                   controller: passwordController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     hintText: 'Mot de passe',
                   ),
                 ),
               ),
-              Padding(padding: EdgeInsets.all(5)),
+              const Padding(padding: EdgeInsets.all(5)),
               SizedBox(
                   child: Text(loginAttempt,
                       style: const TextStyle(color: Colors.red))),
-              Padding(padding: EdgeInsets.all(5)),
+              const Padding(padding: EdgeInsets.all(5)),
               SizedBox(
                 child: TextButton(
                     style: TextButton.styleFrom(backgroundColor: Colors.blue[50]),
@@ -188,55 +188,58 @@ class HomePage extends StatelessWidget {
     List<Widget> pots = [];
     List<Widget> menuTile = [];
     for (final item in data.plantPilot) {
-      plantPilot.add(Center(
-          child: Card(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50)),
-              child: ListTile(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50)),
-                tileColor: item["status"]! == "active"
-                    ? Colors.green[300]
-                    : Colors.grey[300],
-                leading: Icon(item["status"]! == "active"
-                    ? Icons.check_circle
-                    : Icons.close),
-                title: Text("PlantPilot ID : ${item["id"]!}",
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    )),
-                subtitle: Text("Dernier message : ${item["last_message"]!}",
-                    style: const TextStyle(
-                        fontSize: 12, fontStyle: FontStyle.italic)),
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ItemDetailPage(item: item)));
-                },
-              ))));
+      plantPilot.add(Card(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(50)),
+          child: ListTile(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(50)),
+            tileColor: item["status"]! == "active"
+                ? Colors.green[300]
+                : Colors.grey[300],
+            leading: Icon(item["status"]! == "active"
+                ? Icons.check_circle
+                : Icons.close),
+            title: Text("PlantPilot ID : ${item["id"]!}",
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                )),
+            subtitle: Text("Dernier message : ${item["last_message"]!}",
+                style: const TextStyle(
+                    fontSize: 12, fontStyle: FontStyle.italic)),
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ItemDetailPage(item: item)));
+            },
+          )
+      ));
     }
     for (final item in data.pots) {
-      pots.add(ListTile(
-          shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          tileColor:
-          item["status"]! == "active" ? Colors.blue[100] : Colors.red[100],
-          leading: Icon(
-              item["status"]! == "active" ? Icons.check_circle : Icons.close),
-          title: Text(
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              "Identifiant pot : ${item["id"]!}"),
-          subtitle: Text(
-              style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
-              "Niveau d'eau : ${item['water_level']}\nNiveau de batterie : ${item["battery_level"]}\nID PlantPilot : ${item["plantpilot_id"]}\nDernière action : ${item["last_usage"]!}"),
-          onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => ItemDetailPage(item: item)));
-          }));
+      pots.add(Card(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30)),
+          child: ListTile(
+              shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+              tileColor:
+              item["status"]! == "active" ? Colors.blue[100] : Colors.red[100],
+              leading: Icon(
+                  item["status"]! == "active" ? Icons.check_circle : Icons.close),
+              title: Text(
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  "Identifiant pot : ${item["id"]!}"),
+              subtitle: Text(
+                  style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
+                  "Niveau d'eau : ${item['water_level']}\nNiveau de batterie : ${item["battery_level"]}\nID PlantPilot : ${item["plantpilot_id"]}\nDernière action : ${item["last_usage"]!}"),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ItemDetailPage(item: item)));
+              })));
     }
     for (final item in pageItems) {
       var key = item.keys.first;
@@ -282,7 +285,7 @@ class HomePage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 const Center(
-                    child: Row(children: [
+                    child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                       Icon(Icons.arrow_downward),
                       Text("Mes PlantPilot"),
                       Icon(Icons.arrow_downward)
@@ -292,7 +295,7 @@ class HomePage extends StatelessWidget {
                   [Divider(color: Colors.grey[400])] +
                   <Widget>[
                     const Center(
-                        child: Row(children: [
+                        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                           Icon(Icons.arrow_downward),
                           Text("Mes pots de fleurs"),
                           Icon(Icons.arrow_downward)
@@ -342,22 +345,33 @@ class ItemDetailPage extends StatelessWidget {
       var key = item.keys.first;
       var icon = item.values.first["icon"];
       Widget page = item.values.first["page"] as Widget;
-      menuTile.add(ListTile(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-        tileColor: Colors.grey[300],
-        leading: icon,
-        title: Text(key, textAlign: TextAlign.right),
-        onTap: () {
-          if (page.runtimeType.toString() == toString()) {
-            Navigator.pop(context);
-          }
-          Navigator.pop(context);
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => page));
-        },
+      menuTile.add(Card(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(50)),
+          child: ListTile(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+            tileColor: Colors.grey[300],
+            leading: icon,
+            title: Text(key, textAlign: TextAlign.right),
+            onTap: () {
+              if (page.runtimeType.toString() == toString()) {
+                Navigator.pop(context);
+              }
+              Navigator.pop(context);
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => page));
+            },
+          )
       ));
     }
     if (item["type"] == "base") {
+      diplayedItem.add(const Center(
+          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Icon(Icons.arrow_downward),
+            Text("Détails de mon PlantPilot"),
+            Icon(Icons.arrow_downward)
+          ])
+      ));
       diplayedItem.add(ListTile(
           shape:
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
@@ -376,53 +390,87 @@ class ItemDetailPage extends StatelessWidget {
               style:
               const TextStyle(fontSize: 12, fontStyle: FontStyle.italic))));
       diplayedItem.add(Divider(color: Colors.grey[400]));
+      diplayedItem.add(const Center(
+          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Icon(Icons.arrow_downward),
+            Text("Détails des pots associés"),
+            Icon(Icons.arrow_downward)
+          ])
+      ));
       for (final element in data.pots) {
         if (item["id"] == element["plantpilot_id"]) {
-          diplayedItem.add(ListTile(
+          diplayedItem.add(Card(
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
-              tileColor: element["status"]! == "active"
-                  ? Colors.blue[100]
-                  : Colors.red[100],
-              leading: Icon(element["status"]! == "active"
-                  ? Icons.check_circle
-                  : Icons.close),
-              title: Text(
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold),
-                  "Identifiant pot : ${element["id"]!}"),
-              subtitle: Text(
-                  style: const TextStyle(
-                      fontSize: 12, fontStyle: FontStyle.italic),
-                  "Niveau d'eau : ${element['water_level']}\nNiveau de batterie : ${element["battery_level"]}\nID PlantPilot : ${element["plantpilot_id"]}\nDernière action : ${element["last_usage"]}"),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ItemDetailPage(item: element)));
-              }));
+                  borderRadius: BorderRadius.circular(30)),
+              child: ListTile(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)),
+                  tileColor: element["status"]! == "active"
+                      ? Colors.blue[100]
+                      : Colors.red[100],
+                  leading: Icon(element["status"]! == "active"
+                      ? Icons.check_circle
+                      : Icons.close),
+                  title: Text(
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
+                      "Identifiant pot : ${element["id"]!}"),
+                  subtitle: Text(
+                      style: const TextStyle(
+                          fontSize: 12, fontStyle: FontStyle.italic),
+                      "Niveau d'eau : ${element['water_level']}\nNiveau de batterie : ${element["battery_level"]}\nID PlantPilot : ${element["plantpilot_id"]}\nDernière action : ${element["last_usage"]}"),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ItemDetailPage(item: element)));
+                  })
+          ));
         }
       }
     } else if (item["type"] == "pot") {
-      diplayedItem.add(ListTile(
-          shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          tileColor:
-          item["status"]! == "active" ? Colors.blue[100] : Colors.red[100],
-          leading: Icon(
-              item["status"]! == "active" ? Icons.check_circle : Icons.close),
-          title: Text(
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              "Identifiant pot : ${item["id"]!}"),
-          subtitle: Text(
-              style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
-              "Niveau d'eau : ${item['water_level']}\nNiveau de batterie : ${item["battery_level"]}\nID PlantPilot : ${item["plantpilot_id"]}\nDernière action : ${item["last_usage"]!}"),
-          onTap: () {}));
+      diplayedItem.add(const Center(
+          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Icon(Icons.arrow_downward),
+            Text("Détails de mon pot de fleur"),
+            Icon(Icons.arrow_downward)
+          ])
+      ));
+      diplayedItem.add(Card(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30)),
+          child: ListTile(
+              shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              tileColor:
+              item["status"]! == "active" ? Colors.blue[100] : Colors.red[100],
+              leading: Icon(
+                  item["status"]! == "active" ? Icons.check_circle : Icons.close),
+              title: Text(
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  "Identifiant pot : ${item["id"]!}"),
+              subtitle: Text(
+                  style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
+                  "Niveau d'eau : ${item['water_level']}\nNiveau de batterie : ${item["battery_level"]}\nID PlantPilot : ${item["plantpilot_id"]}\nDernière action : ${item["last_usage"]!}"),
+              onTap: () {})
+      ));
+      diplayedItem.add(Divider(color: Colors.grey[300]));
+      diplayedItem.add(Column(
+        children: [const Text("Choisissez un preset à associer au pot"),
+          DropdownMenu(dropdownMenuEntries: presets),
+          TextButton(
+              style: TextButton.styleFrom(
+                  backgroundColor: Colors.blue[50]),
+              onPressed: () {
+                throw UnimplementedError("A dev");
+              },
+              child: const Text("Arrosage manuel"))
+    ]));
     }
+
     for (final item in data.presets) {
       presets.add(
-        DropdownMenuEntry(value: item, label: item["preset_name"] as String)
-      );
+          DropdownMenuEntry(value: item, label: item["preset_name"] as String));
     }
     return Scaffold(
         appBar: AppBar(
@@ -445,26 +493,17 @@ class ItemDetailPage extends StatelessWidget {
         ),
         body: SingleChildScrollView(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: diplayedItem + [
-              if (item["type"] == "pot")
-                DropdownMenu(dropdownMenuEntries: presets),
-      TextButton(
-          style: TextButton.styleFrom(backgroundColor: Colors.blue[50]),
-          onPressed: () {
-            throw UnimplementedError("A dev");
-          },
-          child: const Text("Arrosage manuel")),
-          ]
-          ),
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: diplayedItem),
         ),
-        floatingActionButton: item["type"] == "pot" ? FloatingActionButton(
+        floatingActionButton: item["type"] == "pot"
+            ? FloatingActionButton(
           onPressed: () => {},
           tooltip: 'Créer un nouveau preset',
           child: const Icon(Icons.save),
-        ) : null
-    );
+        )
+            : null);
   }
 }
 
@@ -564,8 +603,7 @@ class PresetsPage extends StatelessWidget {
           onPressed: () => {},
           tooltip: 'Créer un nouveau preset',
           child: const Icon(Icons.add),
-        )
-    );
+        ));
   }
 }
 
@@ -736,7 +774,7 @@ class AccountPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[Text(this.runtimeType.toString())],
+            children: <Widget>[Text(runtimeType.toString())],
           ),
         ));
   }
