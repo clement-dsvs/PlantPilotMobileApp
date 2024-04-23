@@ -245,19 +245,23 @@ class HomePage extends StatelessWidget {
       var key = item.keys.first;
       var icon = item.values.first["icon"];
       Widget page = item.values.first["page"] as Widget;
-      menuTile.add(ListTile(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-        tileColor: Colors.grey[300],
-        leading: icon,
-        title: Text(key, textAlign: TextAlign.right),
-        onTap: () {
-          if (page.runtimeType.toString() == toString()) {
-            Navigator.pop(context); //détruit la page actuel si elle est appelé
-          }
-          Navigator.pop(context);
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => page));
-        },
+      menuTile.add(Card(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(50)),
+          child: ListTile(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+            tileColor: Colors.grey[300],
+            leading: icon,
+            title: Text(key, textAlign: TextAlign.right),
+            onTap: () {
+              if (page.runtimeType.toString() == toString()) {
+                Navigator.pop(context);
+              }
+              Navigator.pop(context);
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => page));
+            },
+          )
       ));
     }
     return Scaffold(
@@ -404,7 +408,7 @@ class ItemDetailPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(30)),
               child: ListTile(
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20)),
+                      borderRadius: BorderRadius.circular(30)),
                   tileColor: element["status"]! == "active"
                       ? Colors.blue[100]
                       : Colors.red[100],
@@ -441,7 +445,7 @@ class ItemDetailPage extends StatelessWidget {
               borderRadius: BorderRadius.circular(30)),
           child: ListTile(
               shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
               tileColor:
               item["status"]! == "active" ? Colors.blue[100] : Colors.red[100],
               leading: Icon(
@@ -456,18 +460,19 @@ class ItemDetailPage extends StatelessWidget {
       ));
       diplayedItem.add(Divider(color: Colors.grey[300]));
       diplayedItem.add(Column(
-        children: [const Text("Choisissez un preset à associer au pot"),
-          DropdownMenu(dropdownMenuEntries: presets),
-          TextButton(
-              style: TextButton.styleFrom(
-                  backgroundColor: Colors.blue[50]),
-              onPressed: () {
-                throw UnimplementedError("A dev");
-              },
-              child: const Text("Arrosage manuel"))
-    ]));
+          children: [const Text("Choisissez un preset à associer au pot"),
+            DropdownMenu(
+                dropdownMenuEntries: presets,
+            ),
+            TextButton(
+                style: TextButton.styleFrom(
+                    backgroundColor: Colors.blue[50]),
+                onPressed: () {
+                  throw UnimplementedError("A dev");
+                },
+                child: const Text("Arrosage manuel"))
+          ]));
     }
-
     for (final item in data.presets) {
       presets.add(
           DropdownMenuEntry(value: item, label: item["preset_name"] as String));
@@ -499,8 +504,9 @@ class ItemDetailPage extends StatelessWidget {
         ),
         floatingActionButton: item["type"] == "pot"
             ? FloatingActionButton(
-          onPressed: () => {},
-          tooltip: 'Créer un nouveau preset',
+          onPressed: () => {
+          },
+          tooltip: 'Sauvegarder le preset associé',
           child: const Icon(Icons.save),
         )
             : null);
@@ -535,19 +541,23 @@ class PresetsPage extends StatelessWidget {
       var key = item.keys.first;
       var icon = item.values.first["icon"];
       Widget page = item.values.first["page"] as Widget;
-      menuTile.add(ListTile(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-        tileColor: Colors.grey[300],
-        leading: icon,
-        title: Text(key, textAlign: TextAlign.right),
-        onTap: () {
-          if (page.runtimeType.toString() == toString()) {
-            Navigator.pop(context);
-          }
-          Navigator.pop(context);
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => page));
-        },
+      menuTile.add(Card(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(50)),
+          child: ListTile(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+            tileColor: Colors.grey[300],
+            leading: icon,
+            title: Text(key, textAlign: TextAlign.right),
+            onTap: () {
+              if (page.runtimeType.toString() == toString()) {
+                Navigator.pop(context);
+              }
+              Navigator.pop(context);
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => page));
+            },
+          )
       ));
     }
     return Scaffold(
@@ -574,38 +584,127 @@ class PresetsPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                const Center(
-                    child: Row(children: [
+                const Row(mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
                       Icon(Icons.arrow_downward),
                       Text("Mes Presets"),
                       Icon(Icons.arrow_downward)
-                    ])),
+                    ]),
                 for (final item in data.presets)
-                  ListTile(
+                  Card(
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20)),
-                      tileColor: Colors.grey[300],
-                      title: Text(
-                          style: const TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
-                          "Nom : ${item["preset_name"]!}"),
-                      subtitle: Text(
-                          style: const TextStyle(
-                              fontSize: 12, fontStyle: FontStyle.italic),
-                          "Crée par : ${item['created_by']}\nCrée le : ${item["created_at"]}\n"),
-                      onTap: () {
-                        /*Navigator.push(context,
+                          borderRadius: BorderRadius.circular(30)),
+                      child: ListTile(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20)),
+                          tileColor: Colors.grey[300],
+                          title: Text(
+                              style: const TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
+                              "Nom : ${item["preset_name"]!}"),
+                          subtitle: Text(
+                              style: const TextStyle(
+                                  fontSize: 12, fontStyle: FontStyle.italic),
+                              "Crée par : ${item['created_by']}\nCrée le : ${item["created_at"]}\n"),
+                          onTap: () {
+                            /*Navigator.push(context,
                               MaterialPageRoute(builder: (context) => ItemDetailPage(item: item)));*/
-                      })
-              ]),
+                          })
+                  )
+              ]
+          ),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () => {},
+          onPressed: () => {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                const CreatePreset()))
+          },
           tooltip: 'Créer un nouveau preset',
           child: const Icon(Icons.add),
+        )
+    );
+  }
+}
+
+
+class CreatePreset extends StatelessWidget {
+  const CreatePreset({super.key});
+  static const pageItems = [
+    {
+      "Dashboard": {"icon": Icon(Icons.home), "page": HomePage()}
+    },
+    {
+      "Presets": {
+        "icon": Icon(Icons.precision_manufacturing),
+        "page": PresetsPage()
+      }
+    },
+    {
+      "Forum": {"icon": Icon(Icons.forum), "page": ForumPage()}
+    },
+    {
+      "Mon compte": {"icon": Icon(Icons.person), "page": AccountPage()}
+    }
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> menuTile = [];
+    for (final item in pageItems) {
+      var key = item.keys.first;
+      var icon = item.values.first["icon"];
+      Widget page = item.values.first["page"] as Widget;
+      menuTile.add(Card(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(50)),
+          child: ListTile(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+            tileColor: Colors.grey[300],
+            leading: icon,
+            title: Text(key, textAlign: TextAlign.right),
+            onTap: () {
+              if (page.runtimeType.toString() == toString()) {
+                Navigator.pop(context);
+              }
+              Navigator.pop(context);
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => page));
+            },
+          )
+      ));
+    }
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text('PlantPilot'),
+          centerTitle: true,
+          backgroundColor: Colors.blue,
+        ),
+        drawer: Drawer(
+          child: ListView(
+            children: <Widget>[
+              const DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                ),
+                child: Text('Menu'),
+              ),
+            ] +
+                menuTile,
+          ),
+        ),
+        body: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[Text(runtimeType.toString())],
+          ),
         ));
   }
 }
+
 
 class ForumPage extends StatelessWidget {
   const ForumPage({super.key});
@@ -635,19 +734,23 @@ class ForumPage extends StatelessWidget {
       var key = item.keys.first;
       var icon = item.values.first["icon"];
       Widget page = item.values.first["page"] as Widget;
-      menuTile.add(ListTile(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-        tileColor: Colors.grey[300],
-        leading: icon,
-        title: Text(key, textAlign: TextAlign.right),
-        onTap: () {
-          if (page.runtimeType.toString() == toString()) {
-            Navigator.pop(context);
-          }
-          Navigator.pop(context);
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => page));
-        },
+      menuTile.add(Card(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(50)),
+          child: ListTile(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+            tileColor: Colors.grey[300],
+            leading: icon,
+            title: Text(key, textAlign: TextAlign.right),
+            onTap: () {
+              if (page.runtimeType.toString() == toString()) {
+                Navigator.pop(context);
+              }
+              Navigator.pop(context);
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => page));
+            },
+          )
       ));
     }
     return Scaffold(
@@ -736,19 +839,23 @@ class AccountPage extends StatelessWidget {
       var key = item.keys.first;
       var icon = item.values.first["icon"];
       Widget page = item.values.first["page"] as Widget;
-      menuTile.add(ListTile(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-        tileColor: Colors.grey[300],
-        leading: icon,
-        title: Text(key, textAlign: TextAlign.right),
-        onTap: () {
-          if (page.runtimeType.toString() == toString()) {
-            Navigator.pop(context);
-          }
-          Navigator.pop(context);
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => page));
-        },
+      menuTile.add(Card(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(50)),
+          child: ListTile(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+            tileColor: Colors.grey[300],
+            leading: icon,
+            title: Text(key, textAlign: TextAlign.right),
+            onTap: () {
+              if (page.runtimeType.toString() == toString()) {
+                Navigator.pop(context);
+              }
+              Navigator.pop(context);
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => page));
+            },
+          )
       ));
     }
     return Scaffold(
