@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 // import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:plantpilot_mobile_app/tools.dart';
@@ -189,50 +190,52 @@ class HomePage extends StatelessWidget {
     List<Widget> menuTile = [];
     for (final item in data.plantPilot) {
       plantPilot.add(Card(
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(50)),
+          shape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
           child: ListTile(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(50)),
+            shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
             tileColor: item["status"]! == "active"
                 ? Colors.green[300]
                 : Colors.grey[300],
-            leading: Icon(item["status"]! == "active"
-                ? Icons.check_circle
-                : Icons.close),
+            leading: Icon(
+                item["status"]! == "active" ? Icons.check_circle : Icons.close),
             title: Text("PlantPilot ID : ${item["id"]!}",
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 )),
             subtitle: Text("Dernier message : ${item["last_message"]!}",
-                style: const TextStyle(
-                    fontSize: 12, fontStyle: FontStyle.italic)),
+                style:
+                const TextStyle(fontSize: 12, fontStyle: FontStyle.italic)),
             onTap: () {
               Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => ItemDetailPage(item: item)));
             },
-          )
-      ));
+          )));
     }
     for (final item in data.pots) {
       pots.add(Card(
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30)),
+          shape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
           child: ListTile(
-              shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-              tileColor:
-              item["status"]! == "active" ? Colors.blue[100] : Colors.red[100],
-              leading: Icon(
-                  item["status"]! == "active" ? Icons.check_circle : Icons.close),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30)),
+              tileColor: item["status"]! == "active"
+                  ? Colors.blue[100]
+                  : Colors.red[100],
+              leading: Icon(item["status"]! == "active"
+                  ? Icons.check_circle
+                  : Icons.close),
               title: Text(
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold),
                   "Identifiant pot : ${item["id"]!}"),
               subtitle: Text(
-                  style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
+                  style: const TextStyle(
+                      fontSize: 12, fontStyle: FontStyle.italic),
                   "Niveau d'eau : ${item['water_level']}\nNiveau de batterie : ${item["battery_level"]}\nID PlantPilot : ${item["plantpilot_id"]}\nDernière action : ${item["last_usage"]!}"),
               onTap: () {
                 Navigator.push(
@@ -246,10 +249,11 @@ class HomePage extends StatelessWidget {
       var icon = item.values.first["icon"];
       Widget page = item.values.first["page"] as Widget;
       menuTile.add(Card(
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(50)),
+          shape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
           child: ListTile(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+            shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
             tileColor: Colors.grey[300],
             leading: icon,
             title: Text(key, textAlign: TextAlign.right),
@@ -261,8 +265,7 @@ class HomePage extends StatelessWidget {
               Navigator.push(
                   context, MaterialPageRoute(builder: (context) => page));
             },
-          )
-      ));
+          )));
     }
     return Scaffold(
         appBar: AppBar(
@@ -289,21 +292,25 @@ class HomePage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 const Center(
-                    child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                      Icon(Icons.arrow_downward),
-                      Text("Mes PlantPilot"),
-                      Icon(Icons.arrow_downward)
-                    ]))
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.arrow_downward),
+                          Text("Mes PlantPilot"),
+                          Icon(Icons.arrow_downward)
+                        ]))
               ] +
                   plantPilot +
                   [Divider(color: Colors.grey[400])] +
                   <Widget>[
                     const Center(
-                        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                          Icon(Icons.arrow_downward),
-                          Text("Mes pots de fleurs"),
-                          Icon(Icons.arrow_downward)
-                        ]))
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.arrow_downward),
+                              Text("Mes pots de fleurs"),
+                              Icon(Icons.arrow_downward)
+                            ]))
                   ] +
                   [
                     for (final item in pots)
@@ -317,10 +324,10 @@ class HomePage extends StatelessWidget {
   }
 }
 
-class ItemDetailPage extends StatelessWidget {
-  Map<String, Object> item;
+class ItemDetailPage extends StatefulWidget {
+  final Map<String, Object> item;
 
-  ItemDetailPage({super.key, required this.item});
+  const ItemDetailPage({super.key, required this.item});
 
   static const pageItems = [
     {
@@ -341,19 +348,25 @@ class ItemDetailPage extends StatelessWidget {
   ];
 
   @override
+  State<ItemDetailPage> createState() => _ItemDetailPageState();
+}
+
+class _ItemDetailPageState extends State<ItemDetailPage> {
+  @override
   Widget build(BuildContext context) {
     List<Widget> menuTile = [];
     List<Widget> diplayedItem = [];
     List<DropdownMenuEntry> presets = [];
-    for (final item in pageItems) {
+    for (final item in ItemDetailPage.pageItems) {
       var key = item.keys.first;
       var icon = item.values.first["icon"];
       Widget page = item.values.first["page"] as Widget;
       menuTile.add(Card(
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(50)),
+          shape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
           child: ListTile(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+            shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
             tileColor: Colors.grey[300],
             leading: icon,
             title: Text(key, textAlign: TextAlign.right),
@@ -365,32 +378,31 @@ class ItemDetailPage extends StatelessWidget {
               Navigator.push(
                   context, MaterialPageRoute(builder: (context) => page));
             },
-          )
-      ));
+          )));
     }
-    if (item["type"] == "base") {
+    if (widget.item["type"] == "base") {
       diplayedItem.add(const Center(
           child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             Icon(Icons.arrow_downward),
             Text("Détails de mon PlantPilot"),
             Icon(Icons.arrow_downward)
-          ])
-      ));
+          ])));
       diplayedItem.add(ListTile(
           shape:
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-          tileColor: item["status"]! == "active"
+          tileColor: widget.item["status"]! == "active"
               ? Colors.green[300]
               : Colors.grey[300],
-          leading: Icon(
-              item["status"]! == "active" ? Icons.check_circle : Icons.close),
-          title: Text("PlantPilot ID : ${item["id"]!}",
+          leading: Icon(widget.item["status"]! == "active"
+              ? Icons.check_circle
+              : Icons.close),
+          title: Text("PlantPilot ID : ${widget.item["id"]!}",
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               )),
           subtitle: Text(
-              "Statut : ${item["status"] == "active" ? "Actif" : "Inactif"}\nDernier message : ${item["last_message"]!}",
+              "Statut : ${widget.item["status"] == "active" ? "Actif" : "Inactif"}\nDernier message : ${widget.item["last_message"]!}",
               style:
               const TextStyle(fontSize: 12, fontStyle: FontStyle.italic))));
       diplayedItem.add(Divider(color: Colors.grey[400]));
@@ -399,10 +411,9 @@ class ItemDetailPage extends StatelessWidget {
             Icon(Icons.arrow_downward),
             Text("Détails des pots associés"),
             Icon(Icons.arrow_downward)
-          ])
-      ));
+          ])));
       for (final element in data.pots) {
-        if (item["id"] == element["plantpilot_id"]) {
+        if (widget.item["id"] == element["plantpilot_id"]) {
           diplayedItem.add(Card(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30)),
@@ -427,51 +438,52 @@ class ItemDetailPage extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => ItemDetailPage(item: element)));
-                  })
-          ));
+                            builder: (context) =>
+                                ItemDetailPage(item: element)));
+                  })));
         }
       }
-    } else if (item["type"] == "pot") {
+    } else if (widget.item["type"] == "pot") {
       diplayedItem.add(const Center(
           child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             Icon(Icons.arrow_downward),
             Text("Détails de mon pot de fleur"),
             Icon(Icons.arrow_downward)
-          ])
-      ));
+          ])));
       diplayedItem.add(Card(
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30)),
+          shape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
           child: ListTile(
-              shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-              tileColor:
-              item["status"]! == "active" ? Colors.blue[100] : Colors.red[100],
-              leading: Icon(
-                  item["status"]! == "active" ? Icons.check_circle : Icons.close),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30)),
+              tileColor: widget.item["status"]! == "active"
+                  ? Colors.blue[100]
+                  : Colors.red[100],
+              leading: Icon(widget.item["status"]! == "active"
+                  ? Icons.check_circle
+                  : Icons.close),
               title: Text(
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  "Identifiant pot : ${item["id"]!}"),
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold),
+                  "Identifiant pot : ${widget.item["id"]!}"),
               subtitle: Text(
-                  style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
-                  "Niveau d'eau : ${item['water_level']}\nNiveau de batterie : ${item["battery_level"]}\nID PlantPilot : ${item["plantpilot_id"]}\nDernière action : ${item["last_usage"]!}"),
-              onTap: () {})
-      ));
+                  style: const TextStyle(
+                      fontSize: 12, fontStyle: FontStyle.italic),
+                  "Niveau d'eau : ${widget.item['water_level']}\nNiveau de batterie : ${widget.item["battery_level"]}\nID PlantPilot : ${widget.item["plantpilot_id"]}\nDernière action : ${widget.item["last_usage"]!}"),
+              onTap: () {})));
       diplayedItem.add(Divider(color: Colors.grey[300]));
-      diplayedItem.add(Column(
-          children: [const Text("Choisissez un preset à associer au pot"),
-            DropdownMenu(
-                dropdownMenuEntries: presets,
-            ),
-            TextButton(
-                style: TextButton.styleFrom(
-                    backgroundColor: Colors.blue[50]),
-                onPressed: () {
-                  throw UnimplementedError("A dev");
-                },
-                child: const Text("Arrosage manuel"))
-          ]));
+      diplayedItem.add(Column(children: [
+        const Text("Choisissez un preset à associer au pot"),
+        DropdownMenu(
+          dropdownMenuEntries: presets,
+        ),
+        TextButton(
+            style: TextButton.styleFrom(backgroundColor: Colors.blue[50]),
+            onPressed: () {
+              throw UnimplementedError("A dev");
+            },
+            child: const Text("Arrosage manuel"))
+      ]));
     }
     for (final item in data.presets) {
       presets.add(
@@ -502,10 +514,9 @@ class ItemDetailPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: diplayedItem),
         ),
-        floatingActionButton: item["type"] == "pot"
+        floatingActionButton: widget.item["type"] == "pot"
             ? FloatingActionButton(
-          onPressed: () => {
-          },
+          onPressed: () => {},
           tooltip: 'Sauvegarder le preset associé',
           child: const Icon(Icons.save),
         )
@@ -542,10 +553,11 @@ class PresetsPage extends StatelessWidget {
       var icon = item.values.first["icon"];
       Widget page = item.values.first["page"] as Widget;
       menuTile.add(Card(
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(50)),
+          shape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
           child: ListTile(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+            shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
             tileColor: Colors.grey[300],
             leading: icon,
             title: Text(key, textAlign: TextAlign.right),
@@ -557,8 +569,7 @@ class PresetsPage extends StatelessWidget {
               Navigator.push(
                   context, MaterialPageRoute(builder: (context) => page));
             },
-          )
-      ));
+          )));
     }
     return Scaffold(
         appBar: AppBar(
@@ -584,7 +595,8 @@ class PresetsPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                const Row(mainAxisAlignment: MainAxisAlignment.center,
+                const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(Icons.arrow_downward),
                       Text("Mes Presets"),
@@ -609,29 +621,23 @@ class PresetsPage extends StatelessWidget {
                           onTap: () {
                             /*Navigator.push(context,
                               MaterialPageRoute(builder: (context) => ItemDetailPage(item: item)));*/
-                          })
-                  )
-              ]
-          ),
+                          }))
+              ]),
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () => {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) =>
-                const CreatePreset()))
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const CreatePreset()))
           },
           tooltip: 'Créer un nouveau preset',
           child: const Icon(Icons.add),
-        )
-    );
+        ));
   }
 }
 
-
-class CreatePreset extends StatelessWidget {
+class CreatePreset extends StatefulWidget {
   const CreatePreset({super.key});
+
   static const pageItems = [
     {
       "Dashboard": {"icon": Icon(Icons.home), "page": HomePage()}
@@ -651,17 +657,32 @@ class CreatePreset extends StatelessWidget {
   ];
 
   @override
+  State<CreatePreset> createState() => _CreatePresetState();
+}
+
+class _CreatePresetState extends State<CreatePreset> {
+  String presetName = "";
+
+  //String password = "";
+  final presetNameController = TextEditingController();
+
+  //final passwordController = TextEditingController();
+  double _sliderQuantityValue = 10;
+  double _sliderIntervalValue = 1;
+
+  @override
   Widget build(BuildContext context) {
     List<Widget> menuTile = [];
-    for (final item in pageItems) {
+    for (final item in CreatePreset.pageItems) {
       var key = item.keys.first;
       var icon = item.values.first["icon"];
       Widget page = item.values.first["page"] as Widget;
       menuTile.add(Card(
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(50)),
+          shape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
           child: ListTile(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+            shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
             tileColor: Colors.grey[300],
             leading: icon,
             title: Text(key, textAlign: TextAlign.right),
@@ -673,38 +694,109 @@ class CreatePreset extends StatelessWidget {
               Navigator.push(
                   context, MaterialPageRoute(builder: (context) => page));
             },
-          )
-      ));
+          )));
     }
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('PlantPilot'),
-          centerTitle: true,
-          backgroundColor: Colors.blue,
-        ),
-        drawer: Drawer(
-          child: ListView(
-            children: <Widget>[
-              const DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                ),
-                child: Text('Menu'),
+      appBar: AppBar(
+        title: const Text('PlantPilot'),
+        centerTitle: true,
+        backgroundColor: Colors.blue,
+      ),
+      drawer: Drawer(
+        child: ListView(
+          children: <Widget>[
+            const DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue,
               ),
-            ] +
-                menuTile,
-          ),
+              child: Text('Menu'),
+            ),
+          ] +
+              menuTile,
         ),
-        body: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[Text(runtimeType.toString())],
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            const Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Icon(Icons.arrow_downward),
+              Text("Créer mon preset"),
+              Icon(Icons.arrow_downward)
+            ]),
+            const Padding(padding: EdgeInsets.all(20)),
+            Text("Nom du preset"),
+            const Padding(padding: EdgeInsets.all(5)),
+            SizedBox(
+              height: 50,
+              width: 300,
+              child: TextField(
+                controller: presetNameController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: "Nom du preset",
+                ),
+              ),
+            ),
+            const Padding(padding: EdgeInsets.all(20)),
+            Text("Quantité d'eau (en ml): ${_sliderQuantityValue.round()}"),
+            SizedBox(
+              width: 350,
+              child: Slider(
+                value: _sliderQuantityValue,
+                min: 10,
+                max: 100,
+                divisions: 9,
+                label: _sliderQuantityValue.round().toString(),
+                onChanged: (double value) {
+                  setState(() {
+                    _sliderQuantityValue = value;
+                  });
+                },
+              ),
+            ),
+            const Padding(padding: EdgeInsets.all(20)),
+            Text(
+                "Interval d'arrosage (en heure): ${_sliderIntervalValue.round()}"),
+            SizedBox(
+                width: 350,
+                child: Slider(
+                  value: _sliderIntervalValue,
+                  min: 1,
+                  max: 72,
+                  divisions: 71,
+                  label: _sliderIntervalValue.round().toString(),
+                  onChanged: (double value) {
+                    setState(() {
+                      _sliderIntervalValue = value;
+                    });
+                  },
+                )),
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+          onPressed: () => {
+          data.presets.add(
+          {
+            "id": "789",
+            "preset_name": presetNameController.text,
+            "created_by": data.account["username"] as String,
+            "created_at": DateTime.now(),
+            "parameters": {
+              "water_quantity": _sliderQuantityValue,
+              "interval": _sliderIntervalValue
+            }
+          }
           ),
-        ));
+          print(data.presets.last)
+    },
+      tooltip: 'Sauvegarder le preset',
+      child: const Icon(Icons.save),
+    ));
   }
 }
-
 
 class ForumPage extends StatelessWidget {
   const ForumPage({super.key});
@@ -735,10 +827,11 @@ class ForumPage extends StatelessWidget {
       var icon = item.values.first["icon"];
       Widget page = item.values.first["page"] as Widget;
       menuTile.add(Card(
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(50)),
+          shape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
           child: ListTile(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+            shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
             tileColor: Colors.grey[300],
             leading: icon,
             title: Text(key, textAlign: TextAlign.right),
@@ -750,8 +843,7 @@ class ForumPage extends StatelessWidget {
               Navigator.push(
                   context, MaterialPageRoute(builder: (context) => page));
             },
-          )
-      ));
+          )));
     }
     return Scaffold(
         appBar: AppBar(
@@ -840,10 +932,11 @@ class AccountPage extends StatelessWidget {
       var icon = item.values.first["icon"];
       Widget page = item.values.first["page"] as Widget;
       menuTile.add(Card(
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(50)),
+          shape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
           child: ListTile(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+            shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
             tileColor: Colors.grey[300],
             leading: icon,
             title: Text(key, textAlign: TextAlign.right),
@@ -855,8 +948,7 @@ class AccountPage extends StatelessWidget {
               Navigator.push(
                   context, MaterialPageRoute(builder: (context) => page));
             },
-          )
-      ));
+          )));
     }
     return Scaffold(
         appBar: AppBar(
