@@ -1,11 +1,24 @@
+import "dart:core";
 import 'package:flutter/material.dart';
-
-// import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:plantpilot_mobile_app/tools.dart';
 import 'package:plantpilot_mobile_app/http.dart';
 import "package:plantpilot_mobile_app/data.dart";
+import "package:plantpilot_mobile_app/data_from_models.dart";
+import "package:realm/realm.dart";
+import "models/account.dart";
+import "models/message.dart";
+import "models/plant_pilot.dart";
+import "models/pot.dart";
+import "models/preset.dart";
+import "models/topic.dart";
 
+Account account = getAccount();
+List<Topic> topics = getTopics();
+List<Message> messages = getMessages(topics);
+PlantPilot plantPilot = getPlantPilot();
+List<Pot> pots = getPots(plantPilot);
+List<Preset> presets = getPresets();
 var data = LocalData();
 var appTools = Tools();
 var httpRequest = Http();
@@ -524,7 +537,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
   }
 }
 
-class PresetsPage extends StatelessWidget {
+class PresetsPage extends StatefulWidget {
   const PresetsPage({super.key});
 
   static const pageItems = [
@@ -546,9 +559,14 @@ class PresetsPage extends StatelessWidget {
   ];
 
   @override
+  State<PresetsPage> createState() => _PresetsPageState();
+}
+
+class _PresetsPageState extends State<PresetsPage> {
+  @override
   Widget build(BuildContext context) {
     List<Widget> menuTile = [];
-    for (final item in pageItems) {
+    for (final item in PresetsPage.pageItems) {
       var key = item.keys.first;
       var icon = item.values.first["icon"];
       Widget page = item.values.first["page"] as Widget;
@@ -621,13 +639,16 @@ class PresetsPage extends StatelessWidget {
                           onTap: () {
                             /*Navigator.push(context,
                               MaterialPageRoute(builder: (context) => ItemDetailPage(item: item)));*/
-                          }))
+                          })
+                  )
               ]),
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () => {
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const CreatePreset()))
+                MaterialPageRoute(builder: (context) => const CreatePreset())).then((_) => setState(() {
+                  print("refresh");
+                }))
           },
           tooltip: 'Créer un nouveau preset',
           child: const Icon(Icons.add),
@@ -726,7 +747,7 @@ class _CreatePresetState extends State<CreatePreset> {
               Icon(Icons.arrow_downward)
             ]),
             const Padding(padding: EdgeInsets.all(20)),
-            Text("Nom du preset"),
+            const Text("Nom du preset"),
             const Padding(padding: EdgeInsets.all(5)),
             SizedBox(
               height: 50,
@@ -790,7 +811,7 @@ class _CreatePresetState extends State<CreatePreset> {
             }
           }
           ),
-          print(data.presets.last)
+          Navigator.pop(context, true)
     },
       tooltip: 'Sauvegarder le preset',
       child: const Icon(Icons.save),
@@ -874,8 +895,9 @@ class ForumPage extends StatelessWidget {
                       Icon(Icons.arrow_downward),
                       Text("Les topics"),
                       Icon(Icons.arrow_downward)
-                    ])),
-                for (final item in data.topics)
+                    ])
+                ),
+                for (final item in topics)
                   ListTile(
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(50)),
@@ -884,14 +906,14 @@ class ForumPage extends StatelessWidget {
                       title: Text(
                           style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
-                          "Sujet : ${item["topic_name"]!}"),
+                          "Sujet : ${item.name}"),
                       subtitle: Text(
                           style: const TextStyle(
                               fontSize: 12, fontStyle: FontStyle.italic),
-                          "Crée par : ${item['created_by']}\nCrée le : ${item["created_at"]}\nDernier message par : ${item["last_message_by"]}\nDernier message le : ${item["last_message_at"]}\nNombre de message(s) : ${item["total_messages"]}"),
+                          "Crée par : ${item.createdBy}\nCrée le : ${item.createdAt}\nDernier message par : ${item.lastMessageBy}\nDernier message le : ${item.lastMessageAt}\nNombre de message(s) : ${item.messageCount}"),
                       onTap: () {
-                        /*Navigator.push(context,
-                              MaterialPageRoute(builder: (context) => ItemDetailPage(item: item)));*/
+                        Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => const AccountPage()));
                       })
               ]),
         ),
