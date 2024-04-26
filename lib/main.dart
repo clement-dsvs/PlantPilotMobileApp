@@ -13,15 +13,18 @@ import "models/pot.dart";
 import "models/preset.dart";
 import "models/topic.dart";
 
+
+var data = LocalData();
+Tools appTools = Tools();
+Http httpRequest = Http();
 Account account = getAccount();
 List<Topic> topics = getTopics();
 List<Message> messages = getMessages(topics);
-PlantPilot plantPilot = getPlantPilot();
+List<PlantPilot> plantPilot = getPlantPilot();
 List<Pot> pots = getPots(plantPilot);
 List<Preset> presets = getPresets();
-var data = LocalData();
-var appTools = Tools();
-var httpRequest = Http();
+final pageItems = appTools.getMenuItems();
+
 
 /// Point d'entré de l'application
 void main() {
@@ -44,7 +47,8 @@ class MyApp extends StatelessWidget {
               colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
               useMaterial3: true),
           home: const LoginPage(),
-        ));
+        )
+    );
   }
 }
 
@@ -170,55 +174,37 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ],
           ),
-        ));
+        )
+    );
   }
 }
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
-  static const pageItems = [
-    {
-      "Dashboard": {"icon": Icon(Icons.home), "page": HomePage()}
-    },
-    {
-      "Presets": {
-        "icon": Icon(Icons.precision_manufacturing),
-        "page": PresetsPage()
-      }
-    },
-    {
-      "Forum": {"icon": Icon(Icons.forum), "page": ForumPage()}
-    },
-    {
-      "Mon compte": {"icon": Icon(Icons.person), "page": AccountPage()}
-    }
-  ];
-
   @override
   Widget build(BuildContext context) {
-    //var appState = context.watch<MyAppState>();
-    List<Widget> plantPilot = [];
-    List<Widget> pots = [];
-    List<Widget> menuTile = [];
-    for (final item in data.plantPilot) {
-      plantPilot.add(Card(
+    List<Widget> plantPilotWidgets = [];
+    List<Widget> potsWidgets = [];
+    List<Widget> menuTileWidgets = [];
+    for (final item in plantPilot) {
+      plantPilotWidgets.add(Card(
           shape:
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
           child: ListTile(
             shape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-            tileColor: item["status"]! == "active"
+            tileColor: item.status == "active"
                 ? Colors.green[300]
                 : Colors.grey[300],
             leading: Icon(
-                item["status"]! == "active" ? Icons.check_circle : Icons.close),
-            title: Text("PlantPilot ID : ${item["id"]!}",
+                item.status == "active" ? Icons.check_circle : Icons.close),
+            title: Text("PlantPilot ID : ${item.id}",
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 )),
-            subtitle: Text("Dernier message : ${item["last_message"]!}",
+            subtitle: Text("Dernier message : ${item.lastMessage}",
                 style:
                 const TextStyle(fontSize: 12, fontStyle: FontStyle.italic)),
             onTap: () {
@@ -229,27 +215,27 @@ class HomePage extends StatelessWidget {
             },
           )));
     }
-    for (final item in data.pots) {
-      pots.add(Card(
+    for (final item in pots) {
+      potsWidgets.add(Card(
           shape:
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
           child: ListTile(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30)),
-              tileColor: item["status"]! == "active"
+              tileColor: item.status == "active"
                   ? Colors.blue[100]
                   : Colors.red[100],
-              leading: Icon(item["status"]! == "active"
+              leading: Icon(item.status == "active"
                   ? Icons.check_circle
                   : Icons.close),
               title: Text(
                   style: const TextStyle(
                       fontSize: 16, fontWeight: FontWeight.bold),
-                  "Identifiant pot : ${item["id"]!}"),
+                  "Identifiant pot : ${item.id}"),
               subtitle: Text(
                   style: const TextStyle(
                       fontSize: 12, fontStyle: FontStyle.italic),
-                  "Niveau d'eau : ${item['water_level']}\nNiveau de batterie : ${item["battery_level"]}\nID PlantPilot : ${item["plantpilot_id"]}\nDernière action : ${item["last_usage"]!}"),
+                  "Niveau d'eau : ${item.waterLevel}\nNiveau de batterie : ${item.batteryLevel}\nID PlantPilot : ${item.plantPilotId}\nDernière action : ${item.lastUsage}"),
               onTap: () {
                 Navigator.push(
                     context,
@@ -261,7 +247,7 @@ class HomePage extends StatelessWidget {
       var key = item.keys.first;
       var icon = item.values.first["icon"];
       Widget page = item.values.first["page"] as Widget;
-      menuTile.add(Card(
+      menuTileWidgets.add(Card(
           shape:
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
           child: ListTile(
@@ -296,7 +282,7 @@ class HomePage extends StatelessWidget {
                 child: Text('Menu'),
               ),
             ] +
-                menuTile,
+                menuTileWidgets,
           ),
         ),
         body: SingleChildScrollView(
@@ -313,7 +299,7 @@ class HomePage extends StatelessWidget {
                           Icon(Icons.arrow_downward)
                         ]))
               ] +
-                  plantPilot +
+                  plantPilotWidgets +
                   [Divider(color: Colors.grey[400])] +
                   <Widget>[
                     const Center(
@@ -326,7 +312,7 @@ class HomePage extends StatelessWidget {
                             ]))
                   ] +
                   [
-                    for (final item in pots)
+                    for (final item in potsWidgets)
                       Row(
                         children: [
                           Expanded(flex: 2, child: Container(child: item))
@@ -338,27 +324,8 @@ class HomePage extends StatelessWidget {
 }
 
 class ItemDetailPage extends StatefulWidget {
-  final Map<String, Object> item;
-
-  const ItemDetailPage({super.key, required this.item});
-
-  static const pageItems = [
-    {
-      "Dashboard": {"icon": Icon(Icons.home), "page": HomePage()}
-    },
-    {
-      "Presets": {
-        "icon": Icon(Icons.precision_manufacturing),
-        "page": PresetsPage()
-      }
-    },
-    {
-      "Forum": {"icon": Icon(Icons.forum), "page": ForumPage()}
-    },
-    {
-      "Mon compte": {"icon": Icon(Icons.person), "page": AccountPage()}
-    }
-  ];
+  dynamic item;
+  ItemDetailPage({super.key, required this.item});
 
   @override
   State<ItemDetailPage> createState() => _ItemDetailPageState();
@@ -367,14 +334,15 @@ class ItemDetailPage extends StatefulWidget {
 class _ItemDetailPageState extends State<ItemDetailPage> {
   @override
   Widget build(BuildContext context) {
-    List<Widget> menuTile = [];
-    List<Widget> diplayedItem = [];
-    List<DropdownMenuEntry> presets = [];
-    for (final item in ItemDetailPage.pageItems) {
+    print(widget.item.runtimeType);
+    List<Widget> menuTileWidgets = [];
+    List<Widget> diplayedItemWidgets = [];
+    List<DropdownMenuEntry> presetsEntries = [];
+    for (final item in pageItems) {
       var key = item.keys.first;
       var icon = item.values.first["icon"];
       Widget page = item.values.first["page"] as Widget;
-      menuTile.add(Card(
+      menuTileWidgets.add(Card(
           shape:
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
           child: ListTile(
@@ -393,60 +361,61 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
             },
           )));
     }
-    if (widget.item["type"] == "base") {
-      diplayedItem.add(const Center(
+    if (widget.item is PlantPilot) {
+      diplayedItemWidgets.add(const Center(
           child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             Icon(Icons.arrow_downward),
             Text("Détails de mon PlantPilot"),
             Icon(Icons.arrow_downward)
           ])));
-      diplayedItem.add(ListTile(
+      diplayedItemWidgets.add(ListTile(
           shape:
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-          tileColor: widget.item["status"]! == "active"
+          tileColor: widget.item.status == "active"
               ? Colors.green[300]
               : Colors.grey[300],
-          leading: Icon(widget.item["status"]! == "active"
+          leading: Icon(widget.item.status == "active"
               ? Icons.check_circle
               : Icons.close),
-          title: Text("PlantPilot ID : ${widget.item["id"]!}",
+          title: Text("PlantPilot ID : ${widget.item.id}",
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               )),
           subtitle: Text(
-              "Statut : ${widget.item["status"] == "active" ? "Actif" : "Inactif"}\nDernier message : ${widget.item["last_message"]!}",
-              style:
-              const TextStyle(fontSize: 12, fontStyle: FontStyle.italic))));
-      diplayedItem.add(Divider(color: Colors.grey[400]));
-      diplayedItem.add(const Center(
+              "Statut : ${widget.item.status == "active" ? "Actif" : "Inactif"}\nDernier message : ${widget.item.lastMessage}",
+              style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic))
+      ));
+      diplayedItemWidgets.add(Divider(color: Colors.grey[400]));
+      diplayedItemWidgets.add(const Center(
           child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             Icon(Icons.arrow_downward),
             Text("Détails des pots associés"),
             Icon(Icons.arrow_downward)
-          ])));
-      for (final element in data.pots) {
-        if (widget.item["id"] == element["plantpilot_id"]) {
-          diplayedItem.add(Card(
+          ])
+      ));
+      for (final element in pots) {
+        if (widget.item.id == element.plantPilotId) {
+          diplayedItemWidgets.add(Card(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30)),
               child: ListTile(
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30)),
-                  tileColor: element["status"]! == "active"
+                  tileColor: element.status == "active"
                       ? Colors.blue[100]
                       : Colors.red[100],
-                  leading: Icon(element["status"]! == "active"
+                  leading: Icon(element.status == "active"
                       ? Icons.check_circle
                       : Icons.close),
                   title: Text(
                       style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.bold),
-                      "Identifiant pot : ${element["id"]!}"),
+                      "Identifiant pot : ${element.id}"),
                   subtitle: Text(
                       style: const TextStyle(
                           fontSize: 12, fontStyle: FontStyle.italic),
-                      "Niveau d'eau : ${element['water_level']}\nNiveau de batterie : ${element["battery_level"]}\nID PlantPilot : ${element["plantpilot_id"]}\nDernière action : ${element["last_usage"]}"),
+                      "Niveau d'eau : ${element.waterLevel}\nNiveau de batterie : ${element.batteryLevel}\nID PlantPilot : ${element.plantPilotId}\nDernière action : ${element.lastUsage}"),
                   onTap: () {
                     Navigator.push(
                         context,
@@ -456,39 +425,39 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                   })));
         }
       }
-    } else if (widget.item["type"] == "pot") {
-      diplayedItem.add(const Center(
+    } else if (widget.item is Pot) {
+      diplayedItemWidgets.add(const Center(
           child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             Icon(Icons.arrow_downward),
             Text("Détails de mon pot de fleur"),
             Icon(Icons.arrow_downward)
           ])));
-      diplayedItem.add(Card(
+      diplayedItemWidgets.add(Card(
           shape:
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
           child: ListTile(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30)),
-              tileColor: widget.item["status"]! == "active"
+              tileColor: widget.item.status == "active"
                   ? Colors.blue[100]
                   : Colors.red[100],
-              leading: Icon(widget.item["status"]! == "active"
+              leading: Icon(widget.item.status == "active"
                   ? Icons.check_circle
                   : Icons.close),
               title: Text(
                   style: const TextStyle(
                       fontSize: 16, fontWeight: FontWeight.bold),
-                  "Identifiant pot : ${widget.item["id"]!}"),
+                  "Identifiant pot : ${widget.item.id}"),
               subtitle: Text(
                   style: const TextStyle(
                       fontSize: 12, fontStyle: FontStyle.italic),
-                  "Niveau d'eau : ${widget.item['water_level']}\nNiveau de batterie : ${widget.item["battery_level"]}\nID PlantPilot : ${widget.item["plantpilot_id"]}\nDernière action : ${widget.item["last_usage"]!}"),
+                  "Niveau d'eau : ${widget.item.waterLevel}\nNiveau de batterie : ${widget.item.batteryLevel}\nID PlantPilot : ${widget.item.plantPilotId}\nDernière action : ${widget.item.lastUsage}"),
               onTap: () {})));
-      diplayedItem.add(Divider(color: Colors.grey[300]));
-      diplayedItem.add(Column(children: [
+      diplayedItemWidgets.add(Divider(color: Colors.grey[300]));
+      diplayedItemWidgets.add(Column(children: [
         const Text("Choisissez un preset à associer au pot"),
         DropdownMenu(
-          dropdownMenuEntries: presets,
+          dropdownMenuEntries: presetsEntries,
         ),
         TextButton(
             style: TextButton.styleFrom(backgroundColor: Colors.blue[50]),
@@ -498,9 +467,9 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
             child: const Text("Arrosage manuel"))
       ]));
     }
-    for (final item in data.presets) {
-      presets.add(
-          DropdownMenuEntry(value: item, label: item["preset_name"] as String));
+    for (final item in presets) {
+      presetsEntries.add(
+          DropdownMenuEntry(value: item, label: item.name));
     }
     return Scaffold(
         appBar: AppBar(
@@ -518,16 +487,16 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                 child: Text('Menu'),
               ),
             ] +
-                menuTile,
+                menuTileWidgets,
           ),
         ),
         body: SingleChildScrollView(
           child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: diplayedItem),
+              children: diplayedItemWidgets),
         ),
-        floatingActionButton: widget.item["type"] == "pot"
+        floatingActionButton: widget.item is Pot
             ? FloatingActionButton(
           onPressed: () => {},
           tooltip: 'Sauvegarder le preset associé',
@@ -540,24 +509,6 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
 class PresetsPage extends StatefulWidget {
   const PresetsPage({super.key});
 
-  static const pageItems = [
-    {
-      "Dashboard": {"icon": Icon(Icons.home), "page": HomePage()}
-    },
-    {
-      "Presets": {
-        "icon": Icon(Icons.precision_manufacturing),
-        "page": PresetsPage()
-      }
-    },
-    {
-      "Forum": {"icon": Icon(Icons.forum), "page": ForumPage()}
-    },
-    {
-      "Mon compte": {"icon": Icon(Icons.person), "page": AccountPage()}
-    }
-  ];
-
   @override
   State<PresetsPage> createState() => _PresetsPageState();
 }
@@ -566,7 +517,7 @@ class _PresetsPageState extends State<PresetsPage> {
   @override
   Widget build(BuildContext context) {
     List<Widget> menuTile = [];
-    for (final item in PresetsPage.pageItems) {
+    for (final item in pageItems) {
       var key = item.keys.first;
       var icon = item.values.first["icon"];
       Widget page = item.values.first["page"] as Widget;
@@ -620,7 +571,7 @@ class _PresetsPageState extends State<PresetsPage> {
                       Text("Mes Presets"),
                       Icon(Icons.arrow_downward)
                     ]),
-                for (final item in data.presets)
+                for (final item in presets)
                   Card(
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30)),
@@ -631,11 +582,11 @@ class _PresetsPageState extends State<PresetsPage> {
                           title: Text(
                               style: const TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold),
-                              "Nom : ${item["preset_name"]!}"),
+                              "Nom : ${item.name}"),
                           subtitle: Text(
                               style: const TextStyle(
                                   fontSize: 12, fontStyle: FontStyle.italic),
-                              "Crée par : ${item['created_by']}\nCrée le : ${item["created_at"]}\n"),
+                              "Crée par : ${item.createdBy}\nCrée le : ${item.createdAt}\n"),
                           onTap: () {
                             /*Navigator.push(context,
                               MaterialPageRoute(builder: (context) => ItemDetailPage(item: item)));*/
@@ -659,24 +610,6 @@ class _PresetsPageState extends State<PresetsPage> {
 class CreatePreset extends StatefulWidget {
   const CreatePreset({super.key});
 
-  static const pageItems = [
-    {
-      "Dashboard": {"icon": Icon(Icons.home), "page": HomePage()}
-    },
-    {
-      "Presets": {
-        "icon": Icon(Icons.precision_manufacturing),
-        "page": PresetsPage()
-      }
-    },
-    {
-      "Forum": {"icon": Icon(Icons.forum), "page": ForumPage()}
-    },
-    {
-      "Mon compte": {"icon": Icon(Icons.person), "page": AccountPage()}
-    }
-  ];
-
   @override
   State<CreatePreset> createState() => _CreatePresetState();
 }
@@ -694,7 +627,7 @@ class _CreatePresetState extends State<CreatePreset> {
   @override
   Widget build(BuildContext context) {
     List<Widget> menuTile = [];
-    for (final item in CreatePreset.pageItems) {
+    for (final item in pageItems) {
       var key = item.keys.first;
       var icon = item.values.first["icon"];
       Widget page = item.values.first["page"] as Widget;
@@ -799,17 +732,8 @@ class _CreatePresetState extends State<CreatePreset> {
       ),
       floatingActionButton: FloatingActionButton(
           onPressed: () => {
-          data.presets.add(
-          {
-            "id": "789",
-            "preset_name": presetNameController.text,
-            "created_by": data.account["username"] as String,
-            "created_at": DateTime.now(),
-            "parameters": {
-              "water_quantity": _sliderQuantityValue,
-              "interval": _sliderIntervalValue
-            }
-          }
+          presets.add(
+            Preset(ObjectId(), presetNameController.text, account.username, DateTime.now(), _sliderQuantityValue.toInt(), _sliderIntervalValue.toInt())
           ),
           Navigator.pop(context, true)
     },
@@ -821,24 +745,6 @@ class _CreatePresetState extends State<CreatePreset> {
 
 class ForumPage extends StatelessWidget {
   const ForumPage({super.key});
-
-  static const pageItems = [
-    {
-      "Dashboard": {"icon": Icon(Icons.home), "page": HomePage()}
-    },
-    {
-      "Presets": {
-        "icon": Icon(Icons.precision_manufacturing),
-        "page": PresetsPage()
-      }
-    },
-    {
-      "Forum": {"icon": Icon(Icons.forum), "page": ForumPage()}
-    },
-    {
-      "Mon compte": {"icon": Icon(Icons.person), "page": AccountPage()}
-    }
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -927,24 +833,6 @@ class ForumPage extends StatelessWidget {
 
 class AccountPage extends StatelessWidget {
   const AccountPage({super.key});
-
-  static const pageItems = [
-    {
-      "Dashboard": {"icon": Icon(Icons.home), "page": HomePage()}
-    },
-    {
-      "Presets": {
-        "icon": Icon(Icons.precision_manufacturing),
-        "page": PresetsPage()
-      }
-    },
-    {
-      "Forum": {"icon": Icon(Icons.forum), "page": ForumPage()}
-    },
-    {
-      "Mon compte": {"icon": Icon(Icons.person), "page": AccountPage()}
-    }
-  ];
 
   @override
   Widget build(BuildContext context) {

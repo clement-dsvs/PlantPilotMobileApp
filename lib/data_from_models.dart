@@ -24,31 +24,30 @@ List<Message> getMessages(List<Topic> topics) {
   List<Message> messages = [];
   var topicIdIndex = 0;
   for (var i = 0; i < 6; i++) {
-    print(topics[topicIdIndex].id);
-    messages.add(Message(ObjectId(), topics[topicIdIndex].id, "root", DateTime.now(), "Message $i", responseTo: null, attachedPreset: null));
     if (i > 0 && i % 2 == 0) {
       topicIdIndex++;
     }
+    messages.add(Message(ObjectId(), topics[topicIdIndex].id, "root", DateTime.now(), "Message $i", responseTo: null, attachedPreset: null));
   }
   return messages;
 }
 
-PlantPilot getPlantPilot() {
-  return PlantPilot(ObjectId(), "active", DateTime.now());
+List<PlantPilot> getPlantPilot() {
+  return [PlantPilot(ObjectId(), "active", DateTime.now())];
 }
 
-List<Pot> getPots(PlantPilot plantPilot) {
+List<Pot> getPots(List<PlantPilot> plantPilot) {
   return [
-    Pot(ObjectId(), "Pot 1", "active", 100, 100, plantPilot.id, preset: null, lastUsage: null),
-    Pot(ObjectId(), "Pot 2", "active", 50, 50, plantPilot.id, preset: null, lastUsage: null),
-    Pot(ObjectId(), "Pot 3", "active", 20, 20, plantPilot.id, preset: null, lastUsage: null)
+    Pot(ObjectId(), "Pot 1", "active", 100, 100, plantPilot.first.id, preset: null, lastUsage: null),
+    Pot(ObjectId(), "Pot 2", "active", 50, 50, plantPilot.first.id, preset: null, lastUsage: null),
+    Pot(ObjectId(), "Pot 3", "active", 20, 20, plantPilot.first.id, preset: null, lastUsage: null)
   ];
 }
 
 List<Preset> getPresets() {
   return [
     Preset(ObjectId(), "Preset 1", "root", DateTime.now(), 10, 1),
-    Preset(ObjectId(), "Preset 1", "root", DateTime.now(), 50, 24),
-    Preset(ObjectId(), "Preset 1", "root", DateTime.now(), 100, 48)
+    Preset(ObjectId(), "Preset 2", "root", DateTime.now(), 50, 24),
+    Preset(ObjectId(), "Preset 3", "root", DateTime.now(), 100, 48)
   ];
 }
