@@ -332,12 +332,13 @@ class ItemDetailPage extends StatefulWidget {
 }
 
 class _ItemDetailPageState extends State<ItemDetailPage> {
+  static Preset? _selectedPreset;
   @override
   Widget build(BuildContext context) {
-    print(widget.item.runtimeType);
+    final TextEditingController presetController = TextEditingController();
     List<Widget> menuTileWidgets = [];
     List<Widget> diplayedItemWidgets = [];
-    List<DropdownMenuEntry> presetsEntries = [];
+    List<DropdownMenuEntry<Preset>> presetsEntries = [];
     for (final item in pageItems) {
       var key = item.keys.first;
       var icon = item.values.first["icon"];
@@ -426,6 +427,10 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
         }
       }
     } else if (widget.item is Pot) {
+      for (final item in presets) {
+        presetsEntries.add(
+            DropdownMenuEntry<Preset>(value: item, label: item.name));
+      }
       diplayedItemWidgets.add(const Center(
           child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             Icon(Icons.arrow_downward),
@@ -456,8 +461,16 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
       diplayedItemWidgets.add(Divider(color: Colors.grey[300]));
       diplayedItemWidgets.add(Column(children: [
         const Text("Choisissez un preset à associer au pot"),
-        DropdownMenu(
+        DropdownMenu<Preset>(
+          width: 200,
           dropdownMenuEntries: presetsEntries,
+            leadingIcon: const Icon(Icons.precision_manufacturing),
+            initialSelection: widget.item.preset == null ? presets.first : presets.firstWhere((element) => widget.item.preset == element.id),
+            onSelected: (Preset? preset) {
+              setState(() {
+                _selectedPreset = preset;
+              });
+            }
         ),
         TextButton(
             style: TextButton.styleFrom(backgroundColor: Colors.blue[50]),
@@ -466,10 +479,6 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
             },
             child: const Text("Arrosage manuel"))
       ]));
-    }
-    for (final item in presets) {
-      presetsEntries.add(
-          DropdownMenuEntry(value: item, label: item.name));
     }
     return Scaffold(
         appBar: AppBar(
@@ -498,7 +507,10 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
         ),
         floatingActionButton: widget.item is Pot
             ? FloatingActionButton(
-          onPressed: () => {},
+          onPressed: () => {
+            pots[pots.indexOf(pots.firstWhere((element) => widget.item == element))].preset = _selectedPreset?.id,
+            Navigator.pop(context)
+           },
           tooltip: 'Sauvegarder le preset associé',
           child: const Icon(Icons.save),
         )
