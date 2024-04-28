@@ -158,8 +158,9 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(
                 child: TextButton(
                     style: TextButton.styleFrom(backgroundColor: Colors.blue[50]),
-                    onPressed: () {
-                      throw UnimplementedError("A dev");
+                    onPressed: () async {
+                      var res = await httpRequest.request("get", "get");
+                      print(res.data);
                     },
                     child: const Text("Mot de passe oublié")),
               ),
@@ -329,6 +330,7 @@ class ItemDetailPage extends StatefulWidget {
 class _ItemDetailPageState extends State<ItemDetailPage> {
   static Preset? _selectedPreset;
   double _sliderQuantityValue = 10;
+
 
   @override
   Widget build(BuildContext context) {
