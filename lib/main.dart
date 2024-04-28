@@ -237,7 +237,7 @@ class HomePage extends StatelessWidget {
               subtitle: Text(
                   style: const TextStyle(
                       fontSize: 12, fontStyle: FontStyle.italic),
-                  "Niveau d'eau : ${item.waterLevel}\nNiveau de batterie : ${item.batteryLevel}\nID PlantPilot : ${item.plantPilotId}\nDernière action : ${item.lastUsage}"),
+                  "Niveau d'eau : ${item.waterLevel}\nNiveau de batterie : ${item.batteryLevel}\nID PlantPilot : ${item.plantPilotId}\nDernière action : ${item.lastWatering}"),
               onTap: () {
                 Navigator.push(
                     context,
@@ -419,7 +419,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                   subtitle: Text(
                       style: const TextStyle(
                           fontSize: 12, fontStyle: FontStyle.italic),
-                      "Niveau d'eau : ${element.waterLevel}\nNiveau de batterie : ${element.batteryLevel}\nID PlantPilot : ${element.plantPilotId}\nDernière action : ${element.lastUsage}"),
+                      "Niveau d'eau : ${element.waterLevel}\nNiveau de batterie : ${element.batteryLevel}\nID PlantPilot : ${element.plantPilotId}\nDernière action : ${element.lastWatering}"),
                   onTap: () {
                     Navigator.push(
                         context,

@@ -1,2 +1,3 @@
-//flutter pub run realm generate --clean
-//flutter pub run realm generate
+//dart run realm generate --clean
+//dart run realm generate --watch
+//dart run realm generate

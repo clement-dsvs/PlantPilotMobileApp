@@ -12,5 +12,6 @@ class _Pot {
   late int batteryLevel;
   late ObjectId plantPilotId;
   late ObjectId? preset;
-  late DateTime? lastUsage;
+  late DateTime? lastWatering;
+  late int humidity;
 }

@@ -14,9 +14,10 @@ class Pot extends _Pot with RealmEntity, RealmObjectBase, RealmObject {
     String status,
     int waterLevel,
     int batteryLevel,
-    ObjectId plantPilotId, {
+    ObjectId plantPilotId,
+    int humidity, {
     ObjectId? preset,
-    DateTime? lastUsage,
+    DateTime? lastWatering,
   }) {
     RealmObjectBase.set(this, 'id', id);
     RealmObjectBase.set(this, 'name', name);
@@ -25,7 +26,8 @@ class Pot extends _Pot with RealmEntity, RealmObjectBase, RealmObject {
     RealmObjectBase.set(this, 'batteryLevel', batteryLevel);
     RealmObjectBase.set(this, 'plantPilotId', plantPilotId);
     RealmObjectBase.set(this, 'preset', preset);
-    RealmObjectBase.set(this, 'lastUsage', lastUsage);
+    RealmObjectBase.set(this, 'lastWatering', lastWatering);
+    RealmObjectBase.set(this, 'humidity', humidity);
   }
 
   Pot._();
@@ -70,11 +72,16 @@ class Pot extends _Pot with RealmEntity, RealmObjectBase, RealmObject {
   set preset(ObjectId? value) => RealmObjectBase.set(this, 'preset', value);
 
   @override
-  DateTime? get lastUsage =>
-      RealmObjectBase.get<DateTime>(this, 'lastUsage') as DateTime?;
+  DateTime? get lastWatering =>
+      RealmObjectBase.get<DateTime>(this, 'lastWatering') as DateTime?;
   @override
-  set lastUsage(DateTime? value) =>
-      RealmObjectBase.set(this, 'lastUsage', value);
+  set lastWatering(DateTime? value) =>
+      RealmObjectBase.set(this, 'lastWatering', value);
+
+  @override
+  int get humidity => RealmObjectBase.get<int>(this, 'humidity') as int;
+  @override
+  set humidity(int value) => RealmObjectBase.set(this, 'humidity', value);
 
   @override
   Stream<RealmObjectChanges<Pot>> get changes =>
@@ -92,7 +99,8 @@ class Pot extends _Pot with RealmEntity, RealmObjectBase, RealmObject {
       'batteryLevel': batteryLevel.toEJson(),
       'plantPilotId': plantPilotId.toEJson(),
       'preset': preset.toEJson(),
-      'lastUsage': lastUsage.toEJson(),
+      'lastWatering': lastWatering.toEJson(),
+      'humidity': humidity.toEJson(),
     };
   }
 
@@ -107,7 +115,8 @@ class Pot extends _Pot with RealmEntity, RealmObjectBase, RealmObject {
         'batteryLevel': EJsonValue batteryLevel,
         'plantPilotId': EJsonValue plantPilotId,
         'preset': EJsonValue preset,
-        'lastUsage': EJsonValue lastUsage,
+        'lastWatering': EJsonValue lastWatering,
+        'humidity': EJsonValue humidity,
       } =>
         Pot(
           fromEJson(id),
@@ -116,8 +125,9 @@ class Pot extends _Pot with RealmEntity, RealmObjectBase, RealmObject {
           fromEJson(waterLevel),
           fromEJson(batteryLevel),
           fromEJson(plantPilotId),
+          fromEJson(humidity),
           preset: fromEJson(preset),
-          lastUsage: fromEJson(lastUsage),
+          lastWatering: fromEJson(lastWatering),
         ),
       _ => raiseInvalidEJson(ejson),
     };
@@ -134,7 +144,9 @@ class Pot extends _Pot with RealmEntity, RealmObjectBase, RealmObject {
       SchemaProperty('batteryLevel', RealmPropertyType.int),
       SchemaProperty('plantPilotId', RealmPropertyType.objectid),
       SchemaProperty('preset', RealmPropertyType.objectid, optional: true),
-      SchemaProperty('lastUsage', RealmPropertyType.timestamp, optional: true),
+      SchemaProperty('lastWatering', RealmPropertyType.timestamp,
+          optional: true),
+      SchemaProperty('humidity', RealmPropertyType.int),
     ]);
   }();
 
