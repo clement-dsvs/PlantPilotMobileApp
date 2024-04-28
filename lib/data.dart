@@ -1,5 +1,8 @@
 library local_data;
 
+import 'main.dart';
+import "package:flutter/material.dart";
+
 class LocalData {
   var account = {
     "username": "roo",
@@ -27,6 +30,7 @@ class LocalData {
       "water_level": 100,
       "battery_level": 100,
       "plantpilot_id": "1234",
+      "preset": "null",
       "last_usage": "2000-01-01 00:00:00",
       "type": "pot"
     },
@@ -36,6 +40,7 @@ class LocalData {
       "water_level": 100,
       "battery_level": 100,
       "plantpilot_id": "1234",
+      "preset": "null",
       "last_usage": "2000-01-01 00:00:00",
       "type": "pot"
     },
@@ -44,7 +49,8 @@ class LocalData {
       "status": "inactive",
       "water_level": 100,
       "battery_level": 100,
-      "plantpilot_id": "1234",
+      "plantpilot_id": "4567",
+      "preset": "null",
       "last_usage": "2000-01-01 00:00:00",
       "type": "pot"
     },
@@ -53,7 +59,8 @@ class LocalData {
       "status": "active",
       "water_level": 100,
       "battery_level": 100,
-      "plantpilot_id": "1234",
+      "plantpilot_id": "4567",
+      "preset": "null",
       "last_usage": "2000-01-01 00:00:00",
       "type": "pot"
     },
@@ -63,6 +70,7 @@ class LocalData {
       "water_level": 100,
       "battery_level": 100,
       "plantpilot_id": "1234",
+      "preset": "null",
       "last_usage": "2000-01-01 00:00:00",
       "type": "pot"
     },
@@ -72,6 +80,7 @@ class LocalData {
       "water_level": 100,
       "battery_level": 100,
       "plantpilot_id": "1234",
+      "preset": "null",
       "last_usage": "2000-01-01 00:00:00",
       "type": "pot"
     },
@@ -80,7 +89,8 @@ class LocalData {
       "status": "active",
       "water_level": 100,
       "battery_level": 100,
-      "plantpilot_id": "1234",
+      "plantpilot_id": "4567",
+      "preset": "null",
       "last_usage": "2000-01-01 00:00:00",
       "type": "pot"
     }
@@ -172,4 +182,24 @@ class LocalData {
       "previous_message": null
     }
   ];
+
+  List getMenuItems() {
+    return [
+      {
+        "Dashboard": {"icon": Icon(Icons.home), "page": HomePage()}
+      },
+      {
+        "Presets": {
+          "icon": Icon(Icons.precision_manufacturing),
+          "page": PresetsPage()
+        }
+      },
+      {
+        "Forum": {"icon": Icon(Icons.forum), "page": ForumPage()}
+      },
+      {
+        "Mon compte": {"icon": Icon(Icons.person), "page": AccountPage()}
+      }
+    ];
+  }
 }
