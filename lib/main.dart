@@ -29,6 +29,10 @@ void main() {
   runApp(const MyApp());
 }
 
+Widget iosReturnButton() {
+  return const Text("OSEF");
+}
+
 /// Widget root, définie le titre de l'application,
 /// le template de style et appel le Widget LoginPage
 /// Stateless car son etat ne change pas en cours d'éxecution
@@ -267,8 +271,8 @@ class HomePage extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           title: const Text('PlantPilot'),
-          centerTitle: true,
-          backgroundColor: Colors.blue,
+            centerTitle: true,
+          backgroundColor: Colors.blue
         ),
         drawer: Drawer(
           child: ListView(
@@ -529,6 +533,9 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
           title: const Text('PlantPilot'),
           centerTitle: true,
           backgroundColor: Colors.blue,
+            actions: appTools.platform == "android" ? [] : const [
+            BackButton()
+        ]
         ),
         drawer: Drawer(
           child: ListView(
@@ -602,6 +609,9 @@ class _PresetsPageState extends State<PresetsPage> {
           title: const Text('PlantPilot'),
           centerTitle: true,
           backgroundColor: Colors.blue,
+            actions: appTools.platform == "android" ? [] : const [
+              BackButton()
+            ]
         ),
         drawer: Drawer(
           child: ListView(
@@ -708,6 +718,9 @@ class _CreatePresetState extends State<CreatePreset> {
         title: const Text('PlantPilot'),
         centerTitle: true,
         backgroundColor: Colors.blue,
+          actions: appTools.platform == "android" ? [] : const [
+            BackButton()
+          ]
       ),
       drawer: Drawer(
         child: ListView(
@@ -830,6 +843,9 @@ class ForumPage extends StatelessWidget {
           title: const Text('PlantPilot'),
           centerTitle: true,
           backgroundColor: Colors.blue,
+            actions: appTools.platform == "android" ? [] : const [
+              BackButton()
+            ]
         ),
         drawer: Drawer(
           child: ListView(
@@ -918,6 +934,9 @@ class AccountPage extends StatelessWidget {
           title: const Text('PlantPilot'),
           centerTitle: true,
           backgroundColor: Colors.blue,
+            actions: appTools.platform == "android" ? [] : const [
+              BackButton()
+            ]
         ),
         drawer: Drawer(
           child: ListView(
@@ -938,6 +957,7 @@ class AccountPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[Text(runtimeType.toString())],
           ),
-        ));
+        )
+    );
   }
 }
