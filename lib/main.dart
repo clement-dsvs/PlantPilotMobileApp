@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:plantpilot_mobile_app/tools.dart';
 import 'package:plantpilot_mobile_app/http.dart';
-import "package:plantpilot_mobile_app/data.dart";
 import "package:plantpilot_mobile_app/data_from_models.dart";
 import "package:realm/realm.dart";
 import "models/account.dart";
@@ -14,7 +13,6 @@ import "models/preset.dart";
 import "models/topic.dart";
 
 
-var data = LocalData();
 Tools appTools = Tools();
 Http httpRequest = Http();
 Account account = getAccount();
@@ -324,8 +322,8 @@ class HomePage extends StatelessWidget {
 }
 
 class ItemDetailPage extends StatefulWidget {
-  dynamic item;
-  ItemDetailPage({super.key, required this.item});
+  final dynamic item;
+  const ItemDetailPage({super.key, required this.item});
 
   @override
   State<ItemDetailPage> createState() => _ItemDetailPageState();
@@ -333,6 +331,7 @@ class ItemDetailPage extends StatefulWidget {
 
 class _ItemDetailPageState extends State<ItemDetailPage> {
   static Preset? _selectedPreset;
+  double _sliderQuantityValue = 10;
   @override
   Widget build(BuildContext context) {
     final TextEditingController presetController = TextEditingController();
@@ -475,7 +474,52 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
         TextButton(
             style: TextButton.styleFrom(backgroundColor: Colors.blue[50]),
             onPressed: () {
-              throw UnimplementedError("A dev");
+              showModalBottomSheet(context: context, builder: (BuildContext context) {
+                _sliderQuantityValue = 10;
+                return StatefulBuilder(
+                  builder: (BuildContext context, void Function(void Function()) setState) {
+                    return SizedBox(
+                        height: 500,
+                        child: Center(
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  const Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                                    Icon(Icons.arrow_downward),
+                                    Text("Détails de l'arrosage manuel"),
+                                    Icon(Icons.arrow_downward)
+                                  ]),
+                                  const Padding(padding: EdgeInsets.all(20)),
+                                  Text("Quantité d'eau (en ml): ${_sliderQuantityValue.round()}"),
+                                  SizedBox(
+                                    width: 350,
+                                    child: Slider(
+                                      value: _sliderQuantityValue,
+                                      min: 10,
+                                      max: 100,
+                                      divisions: 9,
+                                      label: _sliderQuantityValue.round().toString(),
+                                      onChanged: (double value) {
+                                        setState(() {
+                                          _sliderQuantityValue = value;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  TextButton(
+                                    style: TextButton.styleFrom(backgroundColor: Colors.blue[50]),
+                                    onPressed: () {
+                                      //TODO: appel webservice
+                                      Navigator.pop(context);
+                                    }, child: const Text("Envoyer l'instruction d'arrosage"),
+                                  )
+                                ]
+                            )
+                        )
+                    );
+                  },
+                );
+              });
             },
             child: const Text("Arrosage manuel"))
       ]));
@@ -517,6 +561,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
             : null);
   }
 }
+
 
 class PresetsPage extends StatefulWidget {
   const PresetsPage({super.key});
@@ -628,11 +673,7 @@ class CreatePreset extends StatefulWidget {
 
 class _CreatePresetState extends State<CreatePreset> {
   String presetName = "";
-
-  //String password = "";
   final presetNameController = TextEditingController();
-
-  //final passwordController = TextEditingController();
   double _sliderQuantityValue = 10;
   double _sliderIntervalValue = 1;
 
