@@ -33,14 +33,14 @@ List<Message> getMessages(List<Topic> topics) {
 }
 
 List<PlantPilot> getPlantPilot() {
-  return [PlantPilot(ObjectId(), "active", DateTime.now())];
+  return [PlantPilot(ObjectId(), "PlantPilot Maison", "active", DateTime.now())];
 }
 
 List<Pot> getPots(List<PlantPilot> plantPilot) {
   return [
-    Pot(ObjectId(), "Pot 1", "active", 100, 100, plantPilot.first.id, 100, preset: null, lastWatering: null),
-    Pot(ObjectId(), "Pot 2", "active", 50, 50, plantPilot.first.id, 50, preset: null, lastWatering: null),
-    Pot(ObjectId(), "Pot 3", "active", 20, 20, plantPilot.first.id, 0, preset: null, lastWatering: null)
+    Pot(ObjectId(), "Pot 1: rose", "active", 100, 100, plantPilot.first.id, 100, preset: null, lastWatering: null),
+    Pot(ObjectId(), "Pot 2: orchidée", "active", 50, 50, plantPilot.first.id, 50, preset: null, lastWatering: null),
+    Pot(ObjectId(), "Pot 3: pivoine", "active", 20, 20, plantPilot.first.id, 0, preset: null, lastWatering: null)
   ];
 }
 

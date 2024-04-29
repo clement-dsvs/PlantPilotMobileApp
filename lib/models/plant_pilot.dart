@@ -6,6 +6,7 @@ part 'plant_pilot.realm.dart';
 class _PlantPilot {
   @PrimaryKey()
   late ObjectId id;
+  late String name;
   late String status;
   late DateTime lastMessage;
 }

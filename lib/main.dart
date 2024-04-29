@@ -1,4 +1,5 @@
 import "dart:core";
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:plantpilot_mobile_app/tools.dart';
@@ -71,11 +72,7 @@ class _LoginPageState extends State<LoginPage> {
   final passwordController = TextEditingController();
 
   /// Méthode qui va assigner aux propriétés les valeurs des TextField
-  Future<bool> _onLoginClick(login, password) async {
-    setState(() {
-      this.login = login;
-      this.password = password;
-    });
+  Future<bool> _onLoginClick() async {
     //var response = await httpRequest.login(this.login, this.password);
     //var json = (jsonDecode(response) as List).cast<Map<String, dynamic>>();
     return true; // return true temporaire, devra faire un call API pour vérifier le login
@@ -139,19 +136,34 @@ class _LoginPageState extends State<LoginPage> {
                 child: TextButton(
                     style: TextButton.styleFrom(backgroundColor: Colors.blue[50]),
                     onPressed: () async {
-                      if (await _onLoginClick(
-                          loginController.text, passwordController.text)) {
-                        loginAttempt = "";
-                        Navigator.pop(context); //empéche le retour à cette vue
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                const HomePage())); // à modifier par pushReplacement pour empecher le retour à la page de login
-                      } else {
-                        loginAttempt =
-                        "Le login et/ou le mot de passe n'est pas valide.";
-                      }
+                      setState(() {
+                        login = loginController.text;
+                        password = passwordController.text;
+                      });
+                      /*
+                      if (login == "" || password == "") {
+                        return showDialog(context: context, builder: (BuildContext context) => AlertDialog(
+                          title: Center(child: Text("Erreur")),
+                          content: Text("Un des champs requis n'a pas été renseigné"),
+                          actions: [TextButton(onPressed: () {
+                            Navigator.pop(context);
+                          }, child: Text("Ok"))
+                          ],
+                        )) ;
+                      } else {*/
+                        if (await _onLoginClick()) {
+                          loginAttempt = "";
+                          Navigator.pop(context); //empéche le retour à cette vue
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                  const HomePage())); // à modifier par pushReplacement pour empecher le retour à la page de login
+                        } else {
+                          loginAttempt =
+                          "Le login et/ou le mot de passe n'est pas valide.";
+                        }
+                      //}
                     },
                     child: const Text("Se connecter")),
               ),
@@ -197,12 +209,12 @@ class HomePage extends StatelessWidget {
             item.status == "active" ? Colors.green[300] : Colors.grey[300],
             leading: Icon(
                 item.status == "active" ? Icons.check_circle : Icons.close),
-            title: Text("PlantPilot ID : ${item.id}",
+            title: Text("Nom PlantPilot: ${item.name}",
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 )),
-            subtitle: Text("Dernier message : ${item.lastMessage}",
+            subtitle: Text("Dernier message : ${DateFormat('dd-MM-yyy HH:mm:ss').format(item.lastMessage)}",
                 style:
                 const TextStyle(fontSize: 12, fontStyle: FontStyle.italic)),
             onTap: () {
@@ -211,7 +223,8 @@ class HomePage extends StatelessWidget {
                   MaterialPageRoute(
                       builder: (context) => ItemDetailPage(item: item)));
             },
-          )));
+          ))
+      );
     }
     for (final item in pots) {
       potsWidgets.add(Card(
@@ -227,17 +240,18 @@ class HomePage extends StatelessWidget {
               title: Text(
                   style: const TextStyle(
                       fontSize: 16, fontWeight: FontWeight.bold),
-                  "Identifiant pot : ${item.id}"),
+                  "Nom pot: ${item.name}"),
               subtitle: Text(
                   style: const TextStyle(
                       fontSize: 12, fontStyle: FontStyle.italic),
-                  "Niveau d'eau : ${item.waterLevel}\nNiveau de batterie : ${item.batteryLevel}\nID PlantPilot : ${item.plantPilotId}\nDernière action : ${item.lastWatering}"),
+                  "Niveau d'eau : ${item.waterLevel}\nNiveau de batterie : ${item.batteryLevel}\nDernière action : ${item.lastWatering ?? "inconnue"}"),
               onTap: () {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) => ItemDetailPage(item: item)));
-              })));
+              })
+      ));
     }
     for (final item in pageItems) {
       var key = item.keys.first;
@@ -334,7 +348,6 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController presetController = TextEditingController();
     List<Widget> menuTileWidgets = [];
     List<Widget> diplayedItemWidgets = [];
     List<DropdownMenuEntry<Preset>> presetsEntries = [];
@@ -377,13 +390,13 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
           leading: Icon(widget.item.status == "active"
               ? Icons.check_circle
               : Icons.close),
-          title: Text("PlantPilot ID : ${widget.item.id}",
+          title: Text("Nom PlantPilot: ${widget.item.name}",
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               )),
           subtitle: Text(
-              "Statut : ${widget.item.status == "active" ? "Actif" : "Inactif"}\nDernier message : ${widget.item.lastMessage}",
+              "ID: ${widget.item.id}\nStatut : ${widget.item.status == "active" ? "Actif" : "Inactif"}\nDernier message : ${DateFormat('dd-MM-yyy HH:mm:ss').format(widget.item.lastMessage)}",
               style:
               const TextStyle(fontSize: 12, fontStyle: FontStyle.italic))));
       diplayedItemWidgets.add(Divider(color: Colors.grey[400]));
@@ -410,18 +423,19 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                   title: Text(
                       style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.bold),
-                      "Identifiant pot : ${element.id}"),
+                      "Nom pot : ${element.name}"),
                   subtitle: Text(
                       style: const TextStyle(
                           fontSize: 12, fontStyle: FontStyle.italic),
-                      "Niveau d'eau : ${element.waterLevel}\nNiveau de batterie : ${element.batteryLevel}\nID PlantPilot : ${element.plantPilotId}\nDernière action : ${element.lastWatering}"),
+                      "ID: ${element.id}\nStatut: ${element.status}\nPreset : ${element.preset ?? "aucun"}\nNiveau d'eau : ${element.waterLevel}\nNiveau de batterie : ${element.batteryLevel}\nHumidité : ${element.humidity}\nID PlantPilot : ${element.plantPilotId}\nDernière action : ${element.lastWatering ?? "inconnue"}"),
                   onTap: () {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
-                                ItemDetailPage(item: element)));
-                  })));
+                                ItemDetailPage(item: element))).then((_) => setState(() {}));
+                  })
+          ));
         }
       }
     } else if (widget.item is Pot) {
@@ -435,9 +449,10 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
             Text("Détails de mon pot de fleur"),
             Icon(Icons.arrow_downward)
           ])));
+      print(presets.firstWhere((element) => widget.item.preset == element.id) == null);
       diplayedItemWidgets.add(Card(
-          shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30)),
           child: ListTile(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30)),
@@ -450,12 +465,12 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
               title: Text(
                   style: const TextStyle(
                       fontSize: 16, fontWeight: FontWeight.bold),
-                  "Identifiant pot : ${widget.item.id}"),
+                  "Nom pot : ${widget.item.name}"),
               subtitle: Text(
                   style: const TextStyle(
                       fontSize: 12, fontStyle: FontStyle.italic),
-                  "Niveau d'eau : ${widget.item.waterLevel}\nNiveau de batterie : ${widget.item.batteryLevel}\nID PlantPilot : ${widget.item.plantPilotId}\nDernière action : ${widget.item.lastWatering}"),
-              onTap: () {})));
+                  "ID: ${widget.item.id}\nStatut: ${widget.item.status}\nPreset : ${presets.firstWhere((element) => widget.item.preset == element.id).name ?? "aucun"}\nNiveau d'eau : ${widget.item.waterLevel}\nNiveau de batterie : ${widget.item.batteryLevel}\nHumidité : ${widget.item.humidity}\nID PlantPilot : ${widget.item.plantPilotId}\nDernière action : ${widget.item.lastWatering ?? "inconnue"}"))
+      ));
       diplayedItemWidgets.add(Divider(color: Colors.grey[300]));
       diplayedItemWidgets.add(Column(children: [
         const Text("Choisissez un preset à associer au pot"),
@@ -568,7 +583,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
             pots[pots.indexOf(
                 pots.firstWhere((element) => widget.item == element))]
                 .preset = _selectedPreset?.id,
-            Navigator.pop(context)
+            Navigator.pop(context, true)
           },
           tooltip: 'Sauvegarder le preset associé',
           child: const Icon(Icons.save),
@@ -671,9 +686,7 @@ class _PresetsPageState extends State<PresetsPage> {
                 context,
                 MaterialPageRoute(
                     builder: (context) => const CreatePreset()))
-                .then((_) => setState(() {
-              print("refresh");
-            }))
+                .then((_) => setState(() {}))
           },
           tooltip: 'Créer un nouveau preset',
           child: const Icon(Icons.add),
@@ -891,7 +904,7 @@ class ForumPage extends StatelessWidget {
                       subtitle: Text(
                           style: const TextStyle(
                               fontSize: 12, fontStyle: FontStyle.italic),
-                          "Crée par : ${item.createdBy}\nCrée le : ${item.createdAt}\nDernier message par : ${item.lastMessageBy}\nDernier message le : ${item.lastMessageAt}\nNombre de message(s) : ${item.messageCount}"),
+                          "Crée par : ${item.createdBy}\nCrée le : ${item.createdAt}\nDernier message par : ${item.lastMessageBy}\nDernier message le : ${DateFormat('dd-MM-yyy HH:mm:ss').format(item.lastMessageAt)}\nNombre de message(s) : ${item.messageCount}"),
                       onTap: () {
                         Navigator.push(
                             context,
