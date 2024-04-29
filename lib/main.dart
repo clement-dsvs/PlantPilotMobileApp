@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-        create: (context) => MyAppState(),
+        create: (context) =>   MyAppState(),
         child: MaterialApp(
           title: 'PlantPilot App',
           theme: ThemeData(
@@ -519,8 +519,10 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                                       TextButton(
                                         style: TextButton.styleFrom(
                                             backgroundColor: Colors.blue[50]),
-                                        onPressed: () {
-                                          //TODO: appel webservice
+                                        onPressed: () async {
+                                          var res = await httpRequest.request("post", "devices/662f5fb68da8c17b56fbc9a9/water/5000");
+                                          print(res.httpCode);
+                                          print(res.data);
                                           Navigator.pop(context);
                                         },
                                         child: const Text(

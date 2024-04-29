@@ -21,23 +21,23 @@ class Http {
 
   Http() {
     if (app == "dev" && platform == "android") {
-      apiUrl = "http://10.0.2.2:8000";
+      apiUrl = "http://10.0.2.2:8000/";
     } else {
-      apiUrl = "http://127.0.0.1:8000";
+      apiUrl = "http://127.0.0.1:8000/";
     }
   }
 
   Future<HttpReturn> request(String method, String url, {List? headers, List? body}) async {
     switch (method) {
       case "get":
-        var response = await http.get(Uri.parse("https://httpbin.org/$url"));
+        var response = await http.get(Uri.parse(apiUrl + url));
         try {
           return HttpReturn(response.statusCode, jsonDecode(response.body));
         } on Exception {
           return HttpReturn.empty();
         }
       case "post":
-        var response = await http.post(Uri.parse("https://httpbin.org/$url"));
+        var response = await http.post(Uri.parse(apiUrl + url));
         try {
           return HttpReturn(response.statusCode, jsonDecode(response.body));
         } on Exception {
