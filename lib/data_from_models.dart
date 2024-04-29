@@ -38,9 +38,9 @@ List<PlantPilot> getPlantPilot() {
 
 List<Pot> getPots(List<PlantPilot> plantPilot) {
   return [
-    Pot(ObjectId(), "Pot 1: rose", "active", 100, 100, plantPilot.first.id, 100, preset: null, lastWatering: null),
-    Pot(ObjectId(), "Pot 2: orchidée", "active", 50, 50, plantPilot.first.id, 50, preset: null, lastWatering: null),
-    Pot(ObjectId(), "Pot 3: pivoine", "active", 20, 20, plantPilot.first.id, 0, preset: null, lastWatering: null)
+    Pot(ObjectId(), "Rose", "active", 100, 100, plantPilot.first.id, 100, preset: null, lastWatering: null),
+    Pot(ObjectId(), "Orchidée", "active", 50, 50, plantPilot.first.id, 50, preset: null, lastWatering: null),
+    Pot(ObjectId(), "Pivoine", "active", 20, 20, plantPilot.first.id, 0, preset: null, lastWatering: null)
   ];
 }
 

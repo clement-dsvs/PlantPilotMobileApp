@@ -1,4 +1,5 @@
 import "dart:core";
+import 'package:collection/collection.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -153,12 +154,11 @@ class _LoginPageState extends State<LoginPage> {
                       } else {*/
                         if (await _onLoginClick()) {
                           loginAttempt = "";
-                          Navigator.pop(context); //empéche le retour à cette vue
-                          Navigator.push(
+                          Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                  const HomePage())); // à modifier par pushReplacement pour empecher le retour à la page de login
+                                  const HomePage()));
                         } else {
                           loginAttempt =
                           "Le login et/ou le mot de passe n'est pas valide.";
@@ -192,9 +192,11 @@ class _LoginPageState extends State<LoginPage> {
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
+  static var devices = httpRequest.request("get", "devices");
 
   @override
   Widget build(BuildContext context) {
+    devices.then((value) => print(value.data));
     List<Widget> plantPilotWidgets = [];
     List<Widget> potsWidgets = [];
     List<Widget> menuTileWidgets = [];
@@ -334,7 +336,6 @@ class HomePage extends StatelessWidget {
 
 class ItemDetailPage extends StatefulWidget {
   final dynamic item;
-
   const ItemDetailPage({super.key, required this.item});
 
   @override
@@ -345,6 +346,14 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
   static Preset? _selectedPreset;
   double _sliderQuantityValue = 10;
 
+  @override
+  void initState() {
+    super.initState();
+    _selectedPreset = widget.item.preset == null
+        ? presets.first
+        : presets
+        .firstWhere((element) => widget.item.preset == element.id);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -448,8 +457,8 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
             Icon(Icons.arrow_downward),
             Text("Détails de mon pot de fleur"),
             Icon(Icons.arrow_downward)
-          ])));
-      print(presets.firstWhere((element) => widget.item.preset == element.id) == null);
+          ])
+      ));
       diplayedItemWidgets.add(Card(
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30)),
@@ -469,7 +478,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
               subtitle: Text(
                   style: const TextStyle(
                       fontSize: 12, fontStyle: FontStyle.italic),
-                  "ID: ${widget.item.id}\nStatut: ${widget.item.status}\nPreset : ${presets.firstWhere((element) => widget.item.preset == element.id).name ?? "aucun"}\nNiveau d'eau : ${widget.item.waterLevel}\nNiveau de batterie : ${widget.item.batteryLevel}\nHumidité : ${widget.item.humidity}\nID PlantPilot : ${widget.item.plantPilotId}\nDernière action : ${widget.item.lastWatering ?? "inconnue"}"))
+                  "ID: ${widget.item.id}\nStatut: ${widget.item.status}\nPreset : ${presets.firstWhereOrNull((element) => widget.item.preset == element.id)?.name ?? "aucun"}\nNiveau d'eau : ${widget.item.waterLevel}\nNiveau de batterie : ${widget.item.batteryLevel}\nHumidité : ${widget.item.humidity}\nID PlantPilot : ${widget.item.plantPilotId}\nDernière action : ${widget.item.lastWatering ?? "inconnue"}"))
       ));
       diplayedItemWidgets.add(Divider(color: Colors.grey[300]));
       diplayedItemWidgets.add(Column(children: [
@@ -511,7 +520,9 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                                             Text("Détails de l'arrosage manuel"),
                                             Icon(Icons.arrow_downward)
                                           ]),
-                                      const Padding(padding: EdgeInsets.all(20)),
+                                      const Padding(padding: EdgeInsets.all(10)),
+                                      Divider(color: Colors.grey[400]),
+                                      const Padding(padding: EdgeInsets.all(10)),
                                       Text(
                                           "Quantité d'eau (en ml): ${_sliderQuantityValue.round()}"),
                                       SizedBox(
@@ -535,7 +546,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                                         style: TextButton.styleFrom(
                                             backgroundColor: Colors.blue[50]),
                                         onPressed: () async {
-                                          var res = await httpRequest.request("post", "devices/662f5fb68da8c17b56fbc9a9/water/5000");
+                                          var res = await httpRequest.request("post", "devices/662fe15f3c9eb580ab745114/water/${_sliderQuantityValue.toInt()}");
                                           print(res.httpCode);
                                           print(res.data);
                                           Navigator.pop(context);

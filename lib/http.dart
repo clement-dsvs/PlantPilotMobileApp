@@ -11,7 +11,10 @@ class HttpReturn {
 
   HttpReturn(this.httpCode, this.data);
 
-  HttpReturn.empty();
+  HttpReturn.empty() {
+    httpCode = 500;
+    data = <String, String>{};
+  }
 }
 
 class Http {
@@ -21,7 +24,7 @@ class Http {
 
   Http() {
     if (app == "dev" && platform == "android") {
-      apiUrl = "http://10.0.2.2:8000/";
+      apiUrl = "http://192.168.1.3:8000/";
     } else {
       apiUrl = "http://127.0.0.1:8000/";
     }
@@ -30,15 +33,15 @@ class Http {
   Future<HttpReturn> request(String method, String url, {List? headers, List? body}) async {
     switch (method) {
       case "get":
-        var response = await http.get(Uri.parse(apiUrl + url));
         try {
-          return HttpReturn(response.statusCode, jsonDecode(response.body));
+          var response = await http.get(Uri.parse(apiUrl + url));
+          return HttpReturn(response.statusCode, jsonDecode(response.body) as Map<String, dynamic>?);
         } on Exception {
           return HttpReturn.empty();
         }
       case "post":
-        var response = await http.post(Uri.parse(apiUrl + url));
         try {
+          var response = await http.post(Uri.parse(apiUrl + url));
           return HttpReturn(response.statusCode, jsonDecode(response.body));
         } on Exception {
           return HttpReturn.empty();
