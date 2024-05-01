@@ -38,9 +38,9 @@ List<PlantPilot> getPlantPilot() {
 
 List<Pot> getPots(List<PlantPilot> plantPilot) {
   return [
-    Pot(ObjectId(), "Rose", "active", 100, 100, plantPilot.first.id, 100, preset: null, lastWatering: null),
-    Pot(ObjectId(), "Orchidée", "active", 50, 50, plantPilot.first.id, 50, preset: null, lastWatering: null),
-    Pot(ObjectId(), "Pivoine", "active", 20, 20, plantPilot.first.id, 0, preset: null, lastWatering: null)
+    Pot(id: ObjectId(), name: "Rose", status: "active", waterLevel: 100, batteryLevel: 100, plantPilotId: plantPilot.first.id, humidity: 100),
+    Pot(id: ObjectId(), name: "Orchidée", status: "active", waterLevel: 50, batteryLevel: 50, plantPilotId: plantPilot.first.id, humidity: 100),
+    Pot(id: ObjectId(), name: "Pivoine", status: "active", waterLevel: 20, batteryLevel: 20, plantPilotId: plantPilot.first.id, humidity: 100),
   ];
 }
 

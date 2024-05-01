@@ -7,7 +7,7 @@ import 'dart:io' as io show Platform;
 
 class HttpReturn {
   late int? httpCode;
-  late Map<String, dynamic>? data;
+  late dynamic data;
 
   HttpReturn(this.httpCode, this.data);
 
@@ -30,19 +30,19 @@ class Http {
     }
   }
 
-  Future<HttpReturn> request(String method, String url, {List? headers, List? body}) async {
+  Future<HttpReturn> request({required String method, required String url, List? headers, List? body}) async {
     switch (method) {
       case "get":
         try {
           var response = await http.get(Uri.parse(apiUrl + url));
-          return HttpReturn(response.statusCode, jsonDecode(response.body) as Map<String, dynamic>?);
+          return HttpReturn(response.statusCode, response.body);
         } on Exception {
           return HttpReturn.empty();
         }
       case "post":
         try {
           var response = await http.post(Uri.parse(apiUrl + url));
-          return HttpReturn(response.statusCode, jsonDecode(response.body));
+          return HttpReturn(response.statusCode, response.body);
         } on Exception {
           return HttpReturn.empty();
         }
