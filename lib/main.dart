@@ -22,7 +22,7 @@ List<Topic> topics = [];
 List<Message> messages = [];
 List<PlantPilot> plantPilot = getPlantPilot();
 List<Pot> pots = [];
-List<Preset> presets = getPresets();
+List<Preset> presets = [];
 final pageItems = appTools.getMenuItems();
 
 /// Point d'entré de l'application
@@ -192,16 +192,19 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late Future<HttpReturn> devices;
+  late Future<HttpReturn> devicesReq = httpRequest.request(method: "get", url: "devices");
+  late Future<HttpReturn> presetsReq = httpRequest.request(method: "get", url: "preset");
   List<Pot> potsFromJson = [];
   List<Widget> plantPilotWidgets = [];
   List<Widget> potsWidgets = [];
   List<Widget> menuTileWidgets = [];
 
+
   @override
   void initState() {
     super.initState();
-    devices = httpRequest.request(method: "get", url: "devices");
+    pots = [];
+    presets = [];
     for (final item in plantPilot) {
       plantPilotWidgets.add(Card(
           shape:
@@ -230,7 +233,7 @@ class _HomePageState extends State<HomePage> {
             },
           )));
     }
-    devices.then((value) {
+    devicesReq.then((value) {
       var data = jsonDecode(value.data);
       for (final item in data) {
         pots.add(Pot(
@@ -271,6 +274,17 @@ class _HomePageState extends State<HomePage> {
                 })));
       }
     });
+    presetsReq.then((value) {
+      var data = jsonDecode(value.data);
+      for (final item in data) {
+        presets.add(Preset(id: ObjectId.fromHexString(item["_id"]["\$oid"]),
+            name: item["name"],
+            createdBy: item["created_by"],
+            createdAt: DateTime.parse(item["created_at"]["\$date"].toString()),
+            waterQuantity: item["water_quantity"],
+            timeInterval: item["time_interval"]));
+      }
+    });
     for (final item in pageItems) {
       var key = item.keys.first;
       var icon = item.values.first["icon"];
@@ -299,7 +313,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<HttpReturn>(
-        future: devices,
+        future: devicesReq,
         builder: (context, snapshot) {
           Widget scaffold;
           if (snapshot.hasData) {
@@ -631,7 +645,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                                       var res = await httpRequest.request(
                                           method: "post",
                                           url:
-                                              "devices/662fe15f3c9eb580ab745114/water/${_sliderQuantityValue.toInt()}");
+                                              "devices/${pots.first.id.toString()}/water/${_sliderQuantityValue.toInt()}");
                                       Navigator.pop(context);
                                     },
                                     child: const Text(
@@ -673,10 +687,22 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
         ),
         floatingActionButton: widget.item is Pot
             ? FloatingActionButton(
-                onPressed: () => {
+                onPressed: () async => {
                   pots[pots.indexOf(
                           pots.firstWhere((element) => widget.item == element))]
                       .preset = _selectedPreset?.id,
+                  await httpRequest.request(method: "post",
+                      url: "devices/update_preset",
+                      body: jsonEncode({
+                        "device_id":  pots[pots.indexOf(
+                            pots.firstWhere((element) => widget.item == element))]
+                            .id.toString(),
+                        "preset_id":  pots[pots.indexOf(
+                            pots.firstWhere((element) => widget.item == element))]
+                            .preset.toString()
+                      })).then((value) => {
+                    print(value.data)
+                  }),
                   Navigator.pop(context, true)
                 },
                 tooltip: 'Sauvegarder le preset associé',
@@ -909,14 +935,16 @@ class _CreatePresetState extends State<CreatePreset> {
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () => {
+          onPressed: () async => {
             presets.add(Preset(
-                ObjectId(),
-                presetNameController.text,
-                account.username,
-                DateTime.now(),
-                _sliderQuantityValue.toInt(),
-                _sliderIntervalValue.toInt())),
+                id: ObjectId(),
+                name: presetNameController.text,
+                createdBy: account.username,
+                createdAt: DateTime.now(),
+                waterQuantity: _sliderQuantityValue.toInt(),
+                timeInterval: _sliderIntervalValue.toInt())),
+            print(presets.last.id.toString()),
+            await httpRequest.request(method: "post", url: "preset/", body: presets.last.toJson()),
             Navigator.pop(context, true)
           },
           tooltip: 'Sauvegarder le preset',

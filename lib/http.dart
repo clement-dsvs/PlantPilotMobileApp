@@ -30,7 +30,7 @@ class Http {
     }
   }
 
-  Future<HttpReturn> request({required String method, required String url, List? headers, List? body}) async {
+  Future<HttpReturn> request({required String method, required String url, List? headers, dynamic body}) async {
     switch (method) {
       case "get":
         try {
@@ -41,7 +41,10 @@ class Http {
         }
       case "post":
         try {
-          var response = await http.post(Uri.parse(apiUrl + url));
+          var response = await http.post(Uri.parse(apiUrl + url),
+              headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8'},
+              body: jsonEncode(body));
           return HttpReturn(response.statusCode, response.body);
         } on Exception {
           return HttpReturn.empty();

@@ -34,7 +34,7 @@ class Pot {
       "battery_level": int batteryLevel,
       } =>
           Pot(id: id, name: name, status: status, waterLevel: waterLevel, batteryLevel: batteryLevel, plantPilotId: ObjectId(), humidity: humidity),
-      _ => throw const FormatException('Failed to load album.'),
+      _ => throw const FormatException('Failed to load pot.'),
     };
   }
 }

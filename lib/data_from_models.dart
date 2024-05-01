@@ -44,10 +44,11 @@ List<Pot> getPots(List<PlantPilot> plantPilot) {
   ];
 }
 
+/*
 List<Preset> getPresets() {
   return [
     Preset(ObjectId(), "Preset 1", "root", DateTime.now(), 10, 1),
     Preset(ObjectId(), "Preset 2", "root", DateTime.now(), 50, 24),
     Preset(ObjectId(), "Preset 3", "root", DateTime.now(), 100, 48)
   ];
-}
+}*/
