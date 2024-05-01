@@ -1,5 +1,5 @@
 import "dart:core";
-import 'package:collection/collection.dart';
+import "package:collection/collection.dart";
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -349,10 +349,12 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
   @override
   void initState() {
     super.initState();
-    _selectedPreset = widget.item.preset == null
-        ? presets.first
-        : presets
-        .firstWhere((element) => widget.item.preset == element.id);
+    if (widget.item is Pot) {
+      _selectedPreset = widget.item.preset == null
+          ? presets.first
+          : presets
+          .firstWhere((element) => widget.item.preset == element.id);
+    }
   }
 
   @override
@@ -436,7 +438,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                   subtitle: Text(
                       style: const TextStyle(
                           fontSize: 12, fontStyle: FontStyle.italic),
-                      "ID: ${element.id}\nStatut: ${element.status}\nPreset : ${element.preset ?? "aucun"}\nNiveau d'eau : ${element.waterLevel}\nNiveau de batterie : ${element.batteryLevel}\nHumidité : ${element.humidity}\nID PlantPilot : ${element.plantPilotId}\nDernière action : ${element.lastWatering ?? "inconnue"}"),
+                      "ID: ${element.id}\nStatut: ${element.status}\nPreset : ${presets.firstWhereOrNull((item) => element.preset == item.id)?.name ?? "aucun"}\nNiveau d'eau : ${element.waterLevel}\nNiveau de batterie : ${element.batteryLevel}\nHumidité : ${element.humidity}\nID PlantPilot : ${element.plantPilotId}\nDernière action : ${element.lastWatering ?? "inconnue"}"),
                   onTap: () {
                     Navigator.push(
                         context,
