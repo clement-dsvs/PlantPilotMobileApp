@@ -14,9 +14,9 @@ Account getAccount() {
 
 List<Topic> getTopics() {
   return [
-    Topic(ObjectId(), "Topic 1", "root", DateTime.now(), "root", DateTime.now(), 0),
-    Topic(ObjectId(), "Topic 2", "root", DateTime.now(), "root", DateTime.now(), 0),
-    Topic(ObjectId(), "Topic 3", "root", DateTime.now(), "root", DateTime.now(), 0)
+    Topic(ObjectId(), "Discussion", "Francis", DateTime.now(), "Rebecca", DateTime.now(), 0),
+    Topic(ObjectId(), "Quel quantité d'eau quotidienne pour une monstera ?", "Rebecca", DateTime.now(), "Bill", DateTime.now(), 0),
+    Topic(ObjectId(), "Quel quantité d'eau pour mon rhododendron", "Michel", DateTime.now(), "Agnès", DateTime.now(), 0)
   ];
 }
 
@@ -27,7 +27,7 @@ List<Message> getMessages(List<Topic> topics) {
     if (i > 0 && i % 2 == 0) {
       topicIdIndex++;
     }
-    messages.add(Message(ObjectId(), topics[topicIdIndex].id, "root", DateTime.now(), "Message $i", responseTo: null, attachedPreset: null));
+    messages.add(Message(ObjectId(), topics[topicIdIndex].id, "Rebecca", DateTime.now(), "Votre message ici", responseTo: null, attachedPreset: null));
   }
   return messages;
 }

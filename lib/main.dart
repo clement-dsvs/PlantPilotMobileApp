@@ -18,8 +18,8 @@ import "models/topic.dart";
 Tools appTools = Tools();
 Http httpRequest = Http();
 Account account = getAccount();
-List<Topic> topics = [];
-List<Message> messages = [];
+List<Topic> topics = getTopics();
+List<Message> messages = getMessages(topics);
 List<PlantPilot> plantPilot = getPlantPilot();
 List<Pot> pots = [];
 List<Preset> presets = [];
@@ -94,51 +94,51 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const SizedBox(
-              height: 200,
-              width: 200,
-              child: Image(image: AssetImage("assets/LogoE-PlantCare.PNG"))),
-          SizedBox(
-            height: 50,
-            width: 300,
-            child: TextField(
-              controller: loginController,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: 'Login ou adresse mail',
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(
+                  height: 200,
+                  width: 200,
+                  child: Image(image: AssetImage("assets/LogoE-PlantCare.PNG"))),
+              SizedBox(
+                height: 50,
+                width: 300,
+                child: TextField(
+                  controller: loginController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: 'Login ou adresse mail',
+                  ),
+                ),
               ),
-            ),
-          ),
-          const Padding(padding: EdgeInsets.all(5)),
-          SizedBox(
-            height: 50,
-            width: 300,
-            child: TextField(
-              controller: passwordController,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: 'Mot de passe',
+              const Padding(padding: EdgeInsets.all(5)),
+              SizedBox(
+                height: 50,
+                width: 300,
+                child: TextField(
+                  controller: passwordController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: 'Mot de passe',
+                  ),
+                ),
               ),
-            ),
-          ),
-          const Padding(padding: EdgeInsets.all(5)),
-          SizedBox(
-              child: Text(loginAttempt,
-                  style: const TextStyle(color: Colors.red))),
-          const Padding(padding: EdgeInsets.all(5)),
-          SizedBox(
-            child: TextButton(
-                style: TextButton.styleFrom(backgroundColor: Colors.blue[50]),
-                onPressed: () async {
-                  setState(() {
-                    login = loginController.text;
-                    password = passwordController.text;
-                  });
-                  /*
+              const Padding(padding: EdgeInsets.all(5)),
+              SizedBox(
+                  child: Text(loginAttempt,
+                      style: const TextStyle(color: Colors.red))),
+              const Padding(padding: EdgeInsets.all(5)),
+              SizedBox(
+                child: TextButton(
+                    style: TextButton.styleFrom(backgroundColor: Colors.blue[50]),
+                    onPressed: () async {
+                      setState(() {
+                        login = loginController.text;
+                        password = passwordController.text;
+                      });
+                      /*
                       if (login == "" || password == "") {
                         return showDialog(context: context, builder: (BuildContext context) => AlertDialog(
                           title: Center(child: Text("Erreur")),
@@ -149,38 +149,37 @@ class _LoginPageState extends State<LoginPage> {
                           ],
                         )) ;
                       } else {*/
-                  if (await _onLoginClick()) {
-                    loginAttempt = "";
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const HomePage()));
-                  } else {
-                    loginAttempt =
+                      if (await _onLoginClick()) {
+                        loginAttempt = "";
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const HomePage()));
+                      } else {
+                        loginAttempt =
                         "Le login et/ou le mot de passe n'est pas valide.";
-                  }
-                  //}
-                },
-                child: const Text("Se connecter")),
+                      }
+                      //}
+                    },
+                    child: const Text("Se connecter")),
+              ),
+              SizedBox(
+                child: TextButton(
+                    style: TextButton.styleFrom(backgroundColor: Colors.blue[50]),
+                    onPressed: () {},
+                    child: const Text("Mot de passe oublié")),
+              ),
+              SizedBox(
+                child: TextButton(
+                    style: TextButton.styleFrom(backgroundColor: Colors.blue[50]),
+                    onPressed: () {
+                      throw UnimplementedError("A dev");
+                    },
+                    child: const Text("Créer un compte")),
+              ),
+            ],
           ),
-          SizedBox(
-            child: TextButton(
-                style: TextButton.styleFrom(backgroundColor: Colors.blue[50]),
-                onPressed: () {
-                },
-                child: const Text("Mot de passe oublié")),
-          ),
-          SizedBox(
-            child: TextButton(
-                style: TextButton.styleFrom(backgroundColor: Colors.blue[50]),
-                onPressed: () {
-                  throw UnimplementedError("A dev");
-                },
-                child: const Text("Créer un compte")),
-          ),
-        ],
-      ),
-    ));
+        ));
   }
 }
 
@@ -192,13 +191,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late Future<HttpReturn> devicesReq = httpRequest.request(method: "get", url: "devices");
-  late Future<HttpReturn> presetsReq = httpRequest.request(method: "get", url: "preset");
+  late Future<HttpReturn> devicesReq =
+  httpRequest.request(method: "get", url: "devices");
+  late Future<HttpReturn> presetsReq =
+  httpRequest.request(method: "get", url: "preset");
   List<Pot> potsFromJson = [];
   List<Widget> plantPilotWidgets = [];
   List<Widget> potsWidgets = [];
   List<Widget> menuTileWidgets = [];
-
 
   @override
   void initState() {
@@ -208,12 +208,12 @@ class _HomePageState extends State<HomePage> {
     for (final item in plantPilot) {
       plantPilotWidgets.add(Card(
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
           child: ListTile(
             shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
             tileColor:
-                item.status == "active" ? Colors.green[300] : Colors.grey[300],
+            item.status == "active" ? Colors.green[300] : Colors.grey[300],
             leading: Icon(
                 item.status == "active" ? Icons.check_circle : Icons.close),
             title: Text("Nom PlantPilot: ${item.name}",
@@ -224,7 +224,7 @@ class _HomePageState extends State<HomePage> {
             subtitle: Text(
                 "Dernier message : ${DateFormat('dd-MM-yyy HH:mm:ss').format(item.lastMessage)}",
                 style:
-                    const TextStyle(fontSize: 12, fontStyle: FontStyle.italic)),
+                const TextStyle(fontSize: 12, fontStyle: FontStyle.italic)),
             onTap: () {
               Navigator.push(
                   context,
@@ -245,7 +245,7 @@ class _HomePageState extends State<HomePage> {
             plantPilotId: plantPilot.first.id,
             humidity: item["humidity"],
             lastWatering:
-                DateTime.parse(item["last_watering"]["\$date"].toString())));
+            DateTime.parse(item["last_watering"]["\$date"].toString())));
       }
       for (final item in pots) {
         potsWidgets.add(Card(
@@ -254,10 +254,12 @@ class _HomePageState extends State<HomePage> {
             child: ListTile(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30)),
-                tileColor:
-                item.status == "connected" ? Colors.blue[100] : Colors.red[100],
-                leading: Icon(
-                    item.status == "connected" ? Icons.check_circle : Icons.close),
+                tileColor: item.status == "connected"
+                    ? Colors.blue[100]
+                    : Colors.red[100],
+                leading: Icon(item.status == "connected"
+                    ? Icons.check_circle
+                    : Icons.close),
                 title: Text(
                     style: const TextStyle(
                         fontSize: 16, fontWeight: FontWeight.bold),
@@ -277,7 +279,8 @@ class _HomePageState extends State<HomePage> {
     presetsReq.then((value) {
       var data = jsonDecode(value.data);
       for (final item in data) {
-        presets.add(Preset(id: ObjectId.fromHexString(item["_id"]["\$oid"]),
+        presets.add(Preset(
+            id: ObjectId.fromHexString(item["_id"]["\$oid"]),
             name: item["name"],
             createdBy: item["created_by"],
             createdAt: DateTime.parse(item["created_at"]["\$date"].toString()),
@@ -296,10 +299,10 @@ class _HomePageState extends State<HomePage> {
       Widget page = item.values.first["page"] as Widget;
       menuTileWidgets.add(Card(
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
           child: ListTile(
             shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
             tileColor: Colors.grey[300],
             leading: icon,
             title: Text(key, textAlign: TextAlign.right),
@@ -330,13 +333,13 @@ class _HomePageState extends State<HomePage> {
                 drawer: Drawer(
                   child: ListView(
                     children: <Widget>[
-                          const DrawerHeader(
-                            decoration: BoxDecoration(
-                              color: Colors.blue,
-                            ),
-                            child: Text('Menu'),
-                          ),
-                        ] +
+                      const DrawerHeader(
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                        ),
+                        child: Text('Menu'),
+                      ),
+                    ] +
                         menuTileWidgets,
                   ),
                 ),
@@ -345,28 +348,28 @@ class _HomePageState extends State<HomePage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
-                              const Center(
-                                  child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
+                          const Center(
+                              child: Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.center,
+                                  children: [
                                     Icon(Icons.arrow_downward),
                                     Text("Mes PlantPilot"),
                                     Icon(Icons.arrow_downward)
                                   ]))
-                            ] +
+                        ] +
                             plantPilotWidgets +
                             [Divider(color: Colors.grey[400])] +
                             <Widget>[
                               const Center(
                                   child: Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                      MainAxisAlignment.center,
                                       children: [
-                                    Icon(Icons.arrow_downward),
-                                    Text("Mes pots de fleurs"),
-                                    Icon(Icons.arrow_downward)
-                                  ]))
+                                        Icon(Icons.arrow_downward),
+                                        Text("Mes pots de fleurs"),
+                                        Icon(Icons.arrow_downward)
+                                      ]))
                             ] +
                             [
                               for (final item in potsWidgets)
@@ -376,9 +379,7 @@ class _HomePageState extends State<HomePage> {
                                         flex: 2, child: Container(child: item))
                                   ],
                                 )
-                            ])
-                )
-            );
+                            ])));
           } else {
             scaffold = Scaffold(
                 appBar: AppBar(
@@ -388,13 +389,13 @@ class _HomePageState extends State<HomePage> {
                 drawer: Drawer(
                   child: ListView(
                     children: <Widget>[
-                          const DrawerHeader(
-                            decoration: BoxDecoration(
-                              color: Colors.blue,
-                            ),
-                            child: Text('Menu'),
-                          ),
-                        ] +
+                      const DrawerHeader(
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                        ),
+                        child: Text('Menu'),
+                      ),
+                    ] +
                         menuTileWidgets,
                   ),
                 ),
@@ -403,15 +404,15 @@ class _HomePageState extends State<HomePage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                            const Center(
-                                child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
+                        const Center(
+                            child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
                                   Icon(Icons.arrow_downward),
                                   Text("Mes PlantPilot"),
                                   Icon(Icons.arrow_downward)
                                 ]))
-                          ] +
+                      ] +
                           plantPilotWidgets +
                           [Divider(color: Colors.grey[400])] +
                           <Widget>[
@@ -419,14 +420,13 @@ class _HomePageState extends State<HomePage> {
                                 child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                  Icon(Icons.arrow_downward),
-                                  Text("Mes pots de fleurs"),
-                                  Icon(Icons.arrow_downward)
-                                ]))
+                                      Icon(Icons.arrow_downward),
+                                      Text("Mes pots de fleurs"),
+                                      Icon(Icons.arrow_downward)
+                                    ]))
                           ] +
                           [const CircularProgressIndicator()]),
-                )
-            );
+                ));
           }
           return scaffold;
         });
@@ -435,6 +435,7 @@ class _HomePageState extends State<HomePage> {
 
 class ItemDetailPage extends StatefulWidget {
   final dynamic item;
+
   const ItemDetailPage({super.key, required this.item});
 
   @override
@@ -449,7 +450,8 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
   void initState() {
     super.initState();
     if (widget.item is Pot && widget.item.preset != null) {
-      _selectedPreset = presets.firstWhere((element) => widget.item.preset == element.id);
+      _selectedPreset =
+          presets.firstWhere((element) => widget.item.preset == element.id);
     }
   }
 
@@ -464,10 +466,10 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
       Widget page = item.values.first["page"] as Widget;
       menuTileWidgets.add(Card(
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
           child: ListTile(
             shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
             tileColor: Colors.grey[300],
             leading: icon,
             title: Text(key, textAlign: TextAlign.right),
@@ -484,13 +486,13 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
     if (widget.item is PlantPilot) {
       diplayedItemWidgets.add(const Center(
           child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Icon(Icons.arrow_downward),
-        Text("Détails de mon PlantPilot"),
-        Icon(Icons.arrow_downward)
-      ])));
+            Icon(Icons.arrow_downward),
+            Text("Détails de mon PlantPilot"),
+            Icon(Icons.arrow_downward)
+          ])));
       diplayedItemWidgets.add(ListTile(
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
           tileColor: widget.item.status == "active"
               ? Colors.green[300]
               : Colors.grey[300],
@@ -505,46 +507,46 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
           subtitle: Text(
               "ID: ${widget.item.id}\nStatut : ${widget.item.status == "active" ? "Actif" : "Inactif"}\nDernier message : ${DateFormat('dd-MM-yyy HH:mm:ss').format(widget.item.lastMessage)}",
               style:
-                  const TextStyle(fontSize: 12, fontStyle: FontStyle.italic))));
+              const TextStyle(fontSize: 12, fontStyle: FontStyle.italic))));
       diplayedItemWidgets.add(Divider(color: Colors.grey[400]));
       diplayedItemWidgets.add(const Center(
           child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Icon(Icons.arrow_downward),
-        Text("Détails des pots associés"),
-        Icon(Icons.arrow_downward)
-      ])));
-        for (final element in pots) {
-          if (widget.item.id == element.plantPilotId) {
-            diplayedItemWidgets.add(Card(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30)),
-                child: ListTile(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30)),
-                    tileColor: element.status == "connected"
-                        ? Colors.blue[100]
-                        : Colors.red[100],
-                    leading: Icon(element.status == "connected"
-                        ? Icons.check_circle
-                        : Icons.close),
-                    title: Text(
-                        style: const TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
-                        "Nom pot : ${element.name}"),
-                    subtitle: Text(
-                        style: const TextStyle(
-                            fontSize: 12, fontStyle: FontStyle.italic),
-                        "ID: ${element.id}\nStatut: ${element.status}\nPreset : ${presets.firstWhereOrNull((item) => element.preset == item.id)?.name ?? "aucun"}\nNiveau d'eau : ${element.waterLevel}\nNiveau de batterie : ${element.batteryLevel}\nHumidité : ${element.humidity}\nID PlantPilot : ${element.plantPilotId}\nDernière action : ${element.lastWatering ?? "inconnue"}"),
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  ItemDetailPage(item: element)))
-                          .then((_) => setState(() {}));
-                    })));
-          }
+            Icon(Icons.arrow_downward),
+            Text("Détails des pots associés"),
+            Icon(Icons.arrow_downward)
+          ])));
+      for (final element in pots) {
+        if (widget.item.id == element.plantPilotId) {
+          diplayedItemWidgets.add(Card(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30)),
+              child: ListTile(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30)),
+                  tileColor: element.status == "connected"
+                      ? Colors.blue[100]
+                      : Colors.red[100],
+                  leading: Icon(element.status == "connected"
+                      ? Icons.check_circle
+                      : Icons.close),
+                  title: Text(
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
+                      "Nom pot : ${element.name}"),
+                  subtitle: Text(
+                      style: const TextStyle(
+                          fontSize: 12, fontStyle: FontStyle.italic),
+                      "ID: ${element.id}\nStatut: ${element.status}\nPreset : ${presets.firstWhereOrNull((item) => element.preset == item.id)?.name ?? "aucun"}\nNiveau d'eau : ${element.waterLevel}\nNiveau de batterie : ${element.batteryLevel}\nHumidité : ${element.humidity}\nID PlantPilot : ${element.plantPilotId}\nDernière action : ${element.lastWatering ?? "inconnue"}"),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                ItemDetailPage(item: element)))
+                        .then((_) => setState(() {}));
+                  })));
         }
+      }
     } else if (widget.item is Pot) {
       for (final item in presets) {
         presetsEntries
@@ -552,13 +554,13 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
       }
       diplayedItemWidgets.add(const Center(
           child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Icon(Icons.arrow_downward),
-        Text("Détails de mon pot de fleur"),
-        Icon(Icons.arrow_downward)
-      ])));
+            Icon(Icons.arrow_downward),
+            Text("Détails de mon pot de fleur"),
+            Icon(Icons.arrow_downward)
+          ])));
       diplayedItemWidgets.add(Card(
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
           child: ListTile(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30)),
@@ -587,7 +589,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
             initialSelection: widget.item.preset == null
                 ? null
                 : presets
-                    .firstWhere((element) => widget.item.preset == element.id),
+                .firstWhere((element) => widget.item.preset == element.id),
             onSelected: (Preset? preset) {
               setState(() {
                 _selectedPreset = preset;
@@ -610,50 +612,50 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                                 child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
-                                  const Row(
-                                      mainAxisAlignment:
+                                      const Row(
+                                          mainAxisAlignment:
                                           MainAxisAlignment.center,
-                                      children: [
-                                        Icon(Icons.arrow_downward),
-                                        Text("Détails de l'arrosage manuel"),
-                                        Icon(Icons.arrow_downward)
-                                      ]),
-                                  const Padding(padding: EdgeInsets.all(10)),
-                                  Divider(color: Colors.grey[400]),
-                                  const Padding(padding: EdgeInsets.all(10)),
-                                  Text(
-                                      "Quantité d'eau (en ml): ${_sliderQuantityValue.round()}"),
-                                  SizedBox(
-                                    width: 350,
-                                    child: Slider(
-                                      value: _sliderQuantityValue,
-                                      min: 50,
-                                      max: 500,
-                                      divisions: 9,
-                                      label: _sliderQuantityValue
-                                          .round()
-                                          .toString(),
-                                      onChanged: (double value) {
-                                        setState(() {
-                                          _sliderQuantityValue = value;
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                  TextButton(
-                                    style: TextButton.styleFrom(
-                                        backgroundColor: Colors.blue[50]),
-                                    onPressed: () async {
-                                      var res = await httpRequest.request(
-                                          method: "post",
-                                          url:
+                                          children: [
+                                            Icon(Icons.arrow_downward),
+                                            Text("Détails de l'arrosage manuel"),
+                                            Icon(Icons.arrow_downward)
+                                          ]),
+                                      const Padding(padding: EdgeInsets.all(10)),
+                                      Divider(color: Colors.grey[400]),
+                                      const Padding(padding: EdgeInsets.all(10)),
+                                      Text(
+                                          "Quantité d'eau (en ml): ${_sliderQuantityValue.round()}"),
+                                      SizedBox(
+                                        width: 350,
+                                        child: Slider(
+                                          value: _sliderQuantityValue,
+                                          min: 50,
+                                          max: 500,
+                                          divisions: 9,
+                                          label: _sliderQuantityValue
+                                              .round()
+                                              .toString(),
+                                          onChanged: (double value) {
+                                            setState(() {
+                                              _sliderQuantityValue = value;
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                      TextButton(
+                                        style: TextButton.styleFrom(
+                                            backgroundColor: Colors.blue[50]),
+                                        onPressed: () async {
+                                          var res = await httpRequest.request(
+                                              method: "post",
+                                              url:
                                               "devices/${pots.first.id.toString()}/water/${_sliderQuantityValue.toInt()}");
-                                      Navigator.pop(context);
-                                    },
-                                    child: const Text(
-                                        "Envoyer l'instruction d'arrosage"),
-                                  )
-                                ])));
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text(
+                                            "Envoyer l'instruction d'arrosage"),
+                                      )
+                                    ])));
                       },
                     );
                   });
@@ -667,17 +669,17 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
             centerTitle: true,
             backgroundColor: Colors.blue,
             actions:
-                appTools.platform == "android" ? [] : const [BackButton()]),
+            appTools.platform == "android" ? [] : const [BackButton()]),
         drawer: Drawer(
           child: ListView(
             children: <Widget>[
-                  const DrawerHeader(
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                    ),
-                    child: Text('Menu'),
-                  ),
-                ] +
+              const DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                ),
+                child: Text('Menu'),
+              ),
+            ] +
                 menuTileWidgets,
           ),
         ),
@@ -689,34 +691,34 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
         ),
         floatingActionButton: widget.item is Pot
             ? FloatingActionButton(
-                onPressed: () async => {
-                  if (_selectedPreset != null) {
-                    pots[pots.indexOf(
-                        pots.firstWhere((element) => widget.item == element))]
-                        .preset = _selectedPreset?.id,
-                    await httpRequest.request(method: "post",
-                        url: "devices/${pots[pots.indexOf(
-                            pots.firstWhere((element) => widget.item == element))]
-                            .id.toString()}/preset/${pots[pots.indexOf(
-                            pots.firstWhere((element) => widget.item == element))]
-                            .preset.toString()}",
-                        body: jsonEncode({
-                          "device_id":  pots[pots.indexOf(
-                              pots.firstWhere((element) => widget.item == element))]
-                              .id.toString(),
-                          "preset_id":  pots[pots.indexOf(
-                              pots.firstWhere((element) => widget.item == element))]
-                              .preset.toString()
-                        })).then((value) => {
-                      print(value.data)
-                    })
-                  }
-                  ,
-                  Navigator.pop(context, true)
-                },
-                tooltip: 'Sauvegarder le preset associé',
-                child: const Icon(Icons.save),
-              )
+          onPressed: () async => {
+            if (_selectedPreset != null)
+              {
+                pots[pots.indexOf(pots
+                    .firstWhere((element) => widget.item == element))]
+                    .preset = _selectedPreset?.id,
+                await httpRequest
+                    .request(
+                    method: "post",
+                    url:
+                    "devices/${pots[pots.indexOf(pots.firstWhere((element) => widget.item == element))].id.toString()}/preset/${pots[pots.indexOf(pots.firstWhere((element) => widget.item == element))].preset.toString()}",
+                    body: jsonEncode({
+                      "device_id": pots[pots.indexOf(pots.firstWhere(
+                              (element) => widget.item == element))]
+                          .id
+                          .toString(),
+                      "preset_id": pots[pots.indexOf(pots.firstWhere(
+                              (element) => widget.item == element))]
+                          .preset
+                          .toString()
+                    }))
+                    .then((value) => {print(value.data)})
+              },
+            Navigator.pop(context, true)
+          },
+          tooltip: 'Sauvegarder le preset associé',
+          child: const Icon(Icons.save),
+        )
             : null);
   }
 }
@@ -738,10 +740,10 @@ class _PresetsPageState extends State<PresetsPage> {
       Widget page = item.values.first["page"] as Widget;
       menuTile.add(Card(
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
           child: ListTile(
             shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
             tileColor: Colors.grey[300],
             leading: icon,
             title: Text(key, textAlign: TextAlign.right),
@@ -761,17 +763,17 @@ class _PresetsPageState extends State<PresetsPage> {
             centerTitle: true,
             backgroundColor: Colors.blue,
             actions:
-                appTools.platform == "android" ? [] : const [BackButton()]),
+            appTools.platform == "android" ? [] : const [BackButton()]),
         drawer: Drawer(
           child: ListView(
             children: <Widget>[
-                  const DrawerHeader(
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                    ),
-                    child: Text('Menu'),
-                  ),
-                ] +
+              const DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                ),
+                child: Text('Menu'),
+              ),
+            ] +
                 menuTile,
           ),
         ),
@@ -813,9 +815,9 @@ class _PresetsPageState extends State<PresetsPage> {
         floatingActionButton: FloatingActionButton(
           onPressed: () => {
             Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const CreatePreset()))
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const CreatePreset()))
                 .then((_) => setState(() {}))
           },
           tooltip: 'Créer un nouveau preset',
@@ -846,10 +848,10 @@ class _CreatePresetState extends State<CreatePreset> {
       Widget page = item.values.first["page"] as Widget;
       menuTile.add(Card(
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
           child: ListTile(
             shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
             tileColor: Colors.grey[300],
             leading: icon,
             title: Text(key, textAlign: TextAlign.right),
@@ -869,17 +871,17 @@ class _CreatePresetState extends State<CreatePreset> {
             centerTitle: true,
             backgroundColor: Colors.blue,
             actions:
-                appTools.platform == "android" ? [] : const [BackButton()]),
+            appTools.platform == "android" ? [] : const [BackButton()]),
         drawer: Drawer(
           child: ListView(
             children: <Widget>[
-                  const DrawerHeader(
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                    ),
-                    child: Text('Menu'),
-                  ),
-                ] +
+              const DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                ),
+                child: Text('Menu'),
+              ),
+            ] +
                 menuTile,
           ),
         ),
@@ -954,7 +956,8 @@ class _CreatePresetState extends State<CreatePreset> {
                 waterQuantity: _sliderQuantityValue.toInt(),
                 timeInterval: _sliderIntervalValue.toInt())),
             print(presets.last.id.toString()),
-            await httpRequest.request(method: "post", url: "preset/", body: presets.last.toJson()),
+            await httpRequest.request(
+                method: "post", url: "preset/", body: presets.last.toJson()),
             Navigator.pop(context, true)
           },
           tooltip: 'Sauvegarder le preset',
@@ -975,10 +978,10 @@ class ForumPage extends StatelessWidget {
       Widget page = item.values.first["page"] as Widget;
       menuTile.add(Card(
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
           child: ListTile(
             shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
             tileColor: Colors.grey[300],
             leading: icon,
             title: Text(key, textAlign: TextAlign.right),
@@ -998,17 +1001,17 @@ class ForumPage extends StatelessWidget {
             centerTitle: true,
             backgroundColor: Colors.blue,
             actions:
-                appTools.platform == "android" ? [] : const [BackButton()]),
+            appTools.platform == "android" ? [] : const [BackButton()]),
         drawer: Drawer(
           child: ListView(
             children: <Widget>[
-                  const DrawerHeader(
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                    ),
-                    child: Text('Menu'),
-                  ),
-                ] +
+              const DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                ),
+                child: Text('Menu'),
+              ),
+            ] +
                 menuTile,
           ),
         ),
@@ -1021,10 +1024,10 @@ class ForumPage extends StatelessWidget {
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                  Icon(Icons.arrow_downward),
-                  Text("Les topics"),
-                  Icon(Icons.arrow_downward)
-                ])),
+                          Icon(Icons.arrow_downward),
+                          Text("Les topics"),
+                          Icon(Icons.arrow_downward)
+                        ])),
                 for (final item in topics)
                   ListTile(
                       shape: RoundedRectangleBorder(
@@ -1043,14 +1046,106 @@ class ForumPage extends StatelessWidget {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const AccountPage()));
+                                builder: (context) =>
+                                    MessagesPage(topic: item)));
                       })
               ]),
+        ));
+  }
+}
+
+class MessagesPage extends StatefulWidget {
+  final Topic topic;
+
+  const MessagesPage({super.key, required this.topic});
+
+  @override
+  State<MessagesPage> createState() => _MessagesPageState();
+}
+
+class _MessagesPageState extends State<MessagesPage> {
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> menuTile = [];
+    List<Message> filteredMessages = [];
+    for (final item in pageItems) {
+      var key = item.keys.first;
+      var icon = item.values.first["icon"];
+      Widget page = item.values.first["page"] as Widget;
+      menuTile.add(
+        Card(
+            shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+            child: ListTile(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(50)),
+              tileColor: Colors.grey[300],
+              leading: icon,
+              title: Text(key, textAlign: TextAlign.right),
+              onTap: () {
+                if (page.runtimeType.toString() == toString()) {
+                  Navigator.pop(context);
+                }
+                Navigator.pop(context);
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => page));
+              },
+            )),
+      );
+    }
+    for (final item in messages) {
+      if (item.topicId == widget.topic.id) {
+        filteredMessages.add(item);
+      }
+    }
+    return Scaffold(
+        appBar: AppBar(
+            title: const Text('PlantPilot'),
+            centerTitle: true,
+            backgroundColor: Colors.blue,
+            actions:
+            appTools.platform == "android" ? [] : const [BackButton()]),
+        drawer: Drawer(
+          child: ListView(
+            children: <Widget>[
+              const DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                ),
+                child: Text('Menu'),
+              ),
+            ] +
+                menuTile,
+          ),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () => {},
-          tooltip: 'Créer un nouveau preset',
-          child: const Icon(Icons.add),
+        body: SingleChildScrollView(
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                const Center(
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.arrow_downward),
+                          Text("Les Messages"),
+                          Icon(Icons.arrow_downward)
+                        ])),
+                for (final item in filteredMessages)
+                  ListTile(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50)),
+                      tileColor: Colors.grey[200],
+                      leading: const Icon(Icons.message),
+                      title: Text(
+                          style: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                          "Par : ${item.createdBy}"),
+                      subtitle: Text(
+                          style: const TextStyle(
+                              fontSize: 12, fontStyle: FontStyle.italic),
+                          item.message))
+              ]),
         ));
   }
 }
@@ -1067,10 +1162,10 @@ class AccountPage extends StatelessWidget {
       Widget page = item.values.first["page"] as Widget;
       menuTile.add(Card(
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
           child: ListTile(
             shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
             tileColor: Colors.grey[300],
             leading: icon,
             title: Text(key, textAlign: TextAlign.right),
@@ -1090,17 +1185,17 @@ class AccountPage extends StatelessWidget {
             centerTitle: true,
             backgroundColor: Colors.blue,
             actions:
-                appTools.platform == "android" ? [] : const [BackButton()]),
+            appTools.platform == "android" ? [] : const [BackButton()]),
         drawer: Drawer(
           child: ListView(
             children: <Widget>[
-                  const DrawerHeader(
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                    ),
-                    child: Text('Menu'),
-                  ),
-                ] +
+              const DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                ),
+                child: Text('Menu'),
+              ),
+            ] +
                 menuTile,
           ),
         ),
