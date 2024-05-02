@@ -15,19 +15,19 @@ class Tools {
   List getMenuItems() {
     return [
       {
-        "Dashboard": {"icon": Icon(Icons.home), "page": HomePage()}
+        "Dashboard": {"icon": const Icon(Icons.home), "page": const HomePage()}
       },
       {
         "Presets": {
-          "icon": Icon(Icons.precision_manufacturing),
-          "page": PresetsPage()
+          "icon": const Icon(Icons.precision_manufacturing),
+          "page": const PresetsPage()
         }
       },
       {
-        "Forum": {"icon": Icon(Icons.forum), "page": ForumPage()}
+        "Forum": {"icon": const Icon(Icons.forum), "page": const ForumPage()}
       },
       {
-        "Mon compte": {"icon": Icon(Icons.person), "page": AccountPage()}
+        "Mon compte": {"icon": const Icon(Icons.person), "page": const AccountPage()}
       }
     ];
   }

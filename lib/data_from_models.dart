@@ -33,21 +33,22 @@ List<Message> getMessages(List<Topic> topics) {
 }
 
 List<PlantPilot> getPlantPilot() {
-  return [PlantPilot(ObjectId(), "active", DateTime.now())];
+  return [PlantPilot(ObjectId(), "PlantPilot Maison", "active", DateTime.now())];
 }
 
 List<Pot> getPots(List<PlantPilot> plantPilot) {
   return [
-    Pot(ObjectId(), "Pot 1", "active", 100, 100, plantPilot.first.id, preset: null, lastUsage: null),
-    Pot(ObjectId(), "Pot 2", "active", 50, 50, plantPilot.first.id, preset: null, lastUsage: null),
-    Pot(ObjectId(), "Pot 3", "active", 20, 20, plantPilot.first.id, preset: null, lastUsage: null)
+    Pot(id: ObjectId(), name: "Rose", status: "active", waterLevel: 100, batteryLevel: 100, plantPilotId: plantPilot.first.id, humidity: 100),
+    Pot(id: ObjectId(), name: "Orchidée", status: "active", waterLevel: 50, batteryLevel: 50, plantPilotId: plantPilot.first.id, humidity: 100),
+    Pot(id: ObjectId(), name: "Pivoine", status: "active", waterLevel: 20, batteryLevel: 20, plantPilotId: plantPilot.first.id, humidity: 100),
   ];
 }
 
+/*
 List<Preset> getPresets() {
   return [
     Preset(ObjectId(), "Preset 1", "root", DateTime.now(), 10, 1),
     Preset(ObjectId(), "Preset 2", "root", DateTime.now(), 50, 24),
     Preset(ObjectId(), "Preset 3", "root", DateTime.now(), 100, 48)
   ];
-}
+}*/
