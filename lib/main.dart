@@ -284,6 +284,11 @@ class _HomePageState extends State<HomePage> {
             waterQuantity: item["water_quantity"],
             timeInterval: item["time_interval"]));
       }
+      if (presets.isEmpty) {
+        for (var i = 0; i < pots.length; i++) {
+          pots[i].preset = null;
+        }
+      }
     });
     for (final item in pageItems) {
       var key = item.keys.first;
@@ -443,10 +448,8 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
   @override
   void initState() {
     super.initState();
-    if (widget.item is Pot) {
-      _selectedPreset = widget.item.preset == null
-          ? presets.first
-          : presets.firstWhere((element) => widget.item.preset == element.id);
+    if (widget.item is Pot && widget.item.preset != null) {
+      _selectedPreset = presets.firstWhere((element) => widget.item.preset == element.id);
     }
   }
 
@@ -582,7 +585,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
             dropdownMenuEntries: presetsEntries,
             leadingIcon: const Icon(Icons.precision_manufacturing),
             initialSelection: widget.item.preset == null
-                ? presets.first
+                ? null
                 : presets
                     .firstWhere((element) => widget.item.preset == element.id),
             onSelected: (Preset? preset) {
@@ -687,25 +690,28 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
         floatingActionButton: widget.item is Pot
             ? FloatingActionButton(
                 onPressed: () async => {
-                  pots[pots.indexOf(
-                          pots.firstWhere((element) => widget.item == element))]
-                      .preset = _selectedPreset?.id,
-                  await httpRequest.request(method: "post",
-                      url: "devices/${pots[pots.indexOf(
-                pots.firstWhere((element) => widget.item == element))]
-        .id.toString()}/preset/${pots[pots.indexOf(
-                          pots.firstWhere((element) => widget.item == element))]
-                          .preset.toString()}",
-                      body: jsonEncode({
-                        "device_id":  pots[pots.indexOf(
+                  if (_selectedPreset != null) {
+                    pots[pots.indexOf(
+                        pots.firstWhere((element) => widget.item == element))]
+                        .preset = _selectedPreset?.id,
+                    await httpRequest.request(method: "post",
+                        url: "devices/${pots[pots.indexOf(
                             pots.firstWhere((element) => widget.item == element))]
-                            .id.toString(),
-                        "preset_id":  pots[pots.indexOf(
+                            .id.toString()}/preset/${pots[pots.indexOf(
                             pots.firstWhere((element) => widget.item == element))]
-                            .preset.toString()
-                      })).then((value) => {
-                    print(value.data)
-                  }),
+                            .preset.toString()}",
+                        body: jsonEncode({
+                          "device_id":  pots[pots.indexOf(
+                              pots.firstWhere((element) => widget.item == element))]
+                              .id.toString(),
+                          "preset_id":  pots[pots.indexOf(
+                              pots.firstWhere((element) => widget.item == element))]
+                              .preset.toString()
+                        })).then((value) => {
+                      print(value.data)
+                    })
+                  }
+                  ,
                   Navigator.pop(context, true)
                 },
                 tooltip: 'Sauvegarder le preset associé',
@@ -781,26 +787,27 @@ class _PresetsPageState extends State<PresetsPage> {
                       Text("Mes Presets"),
                       Icon(Icons.arrow_downward)
                     ]),
-                for (final item in presets)
-                  Card(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30)),
-                      child: ListTile(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20)),
-                          tileColor: Colors.grey[300],
-                          title: Text(
-                              style: const TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold),
-                              "Nom : ${item.name}"),
-                          subtitle: Text(
-                              style: const TextStyle(
-                                  fontSize: 12, fontStyle: FontStyle.italic),
-                              "Crée par : ${item.createdBy}\nCrée le : ${item.createdAt}\n"),
-                          onTap: () {
-                            /*Navigator.push(context,
-                              MaterialPageRoute(builder: (context) => ItemDetailPage(item: item)));*/
-                          }))
+                if (presets.isNotEmpty)
+                  for (final item in presets)
+                    Card(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30)),
+                        child: ListTile(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20)),
+                            tileColor: Colors.grey[300],
+                            title: Text(
+                                style: const TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold),
+                                "Nom : ${item.name}"),
+                            subtitle: Text(
+                                style: const TextStyle(
+                                    fontSize: 12, fontStyle: FontStyle.italic),
+                                "Crée par : ${item.createdBy}\nCrée le : ${item.createdAt}\n"),
+                            onTap: () {
+                              /*Navigator.push(context,
+                                MaterialPageRoute(builder: (context) => ItemDetailPage(item: item)));*/
+                            }))
               ]),
         ),
         floatingActionButton: FloatingActionButton(
