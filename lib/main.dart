@@ -692,7 +692,11 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                           pots.firstWhere((element) => widget.item == element))]
                       .preset = _selectedPreset?.id,
                   await httpRequest.request(method: "post",
-                      url: "devices/update_preset",
+                      url: "devices/${pots[pots.indexOf(
+                pots.firstWhere((element) => widget.item == element))]
+        .id.toString()}/preset/${pots[pots.indexOf(
+                          pots.firstWhere((element) => widget.item == element))]
+                          .preset.toString()}",
                       body: jsonEncode({
                         "device_id":  pots[pots.indexOf(
                             pots.firstWhere((element) => widget.item == element))]

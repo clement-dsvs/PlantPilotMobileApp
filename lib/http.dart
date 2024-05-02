@@ -24,7 +24,7 @@ class Http {
 
   Http() {
     if (app == "dev" && platform == "android") {
-      apiUrl = "http://192.168.1.3:8000/";
+      apiUrl = "http://172.20.10.3:8000/";/*"http://10.0.2.2:8000/"*/;
     } else {
       apiUrl = "http://127.0.0.1:8000/";
     }
