@@ -25,10 +25,10 @@ class Tools {
       },
       {
         "Forum": {"icon": const Icon(Icons.forum), "page": const ForumPage()}
-      },
+      }/*,
       {
         "Mon compte": {"icon": const Icon(Icons.person), "page": const AccountPage()}
-      }
+      }*/
     ];
   }
 }

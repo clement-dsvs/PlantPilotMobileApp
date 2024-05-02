@@ -1018,7 +1018,9 @@ class ForumPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 const Center(
-                    child: Row(children: [
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
                   Icon(Icons.arrow_downward),
                   Text("Les topics"),
                   Icon(Icons.arrow_downward)
