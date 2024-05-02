@@ -430,7 +430,6 @@ class _HomePageState extends State<HomePage> {
 
 class ItemDetailPage extends StatefulWidget {
   final dynamic item;
-
   const ItemDetailPage({super.key, required this.item});
 
   @override
@@ -439,7 +438,7 @@ class ItemDetailPage extends StatefulWidget {
 
 class _ItemDetailPageState extends State<ItemDetailPage> {
   static Preset? _selectedPreset;
-  double _sliderQuantityValue = 10;
+  double _sliderQuantityValue = 50;
 
   @override
   void initState() {
@@ -598,7 +597,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
               showModalBottomSheet(
                   context: context,
                   builder: (BuildContext context) {
-                    _sliderQuantityValue = 10;
+                    _sliderQuantityValue = 50;
                     return StatefulBuilder(
                       builder: (BuildContext context,
                           void Function(void Function()) setState) {
@@ -625,8 +624,8 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                                     width: 350,
                                     child: Slider(
                                       value: _sliderQuantityValue,
-                                      min: 10,
-                                      max: 100,
+                                      min: 50,
+                                      max: 500,
                                       divisions: 9,
                                       label: _sliderQuantityValue
                                           .round()
@@ -828,8 +827,8 @@ class CreatePreset extends StatefulWidget {
 class _CreatePresetState extends State<CreatePreset> {
   String presetName = "";
   final presetNameController = TextEditingController();
-  double _sliderQuantityValue = 10;
-  double _sliderIntervalValue = 1;
+  double _sliderQuantityValue = 50;
+  double _sliderIntervalValue = 5;
 
   @override
   Widget build(BuildContext context) {
@@ -907,8 +906,8 @@ class _CreatePresetState extends State<CreatePreset> {
                 width: 350,
                 child: Slider(
                   value: _sliderQuantityValue,
-                  min: 10,
-                  max: 100,
+                  min: 50,
+                  max: 500,
                   divisions: 9,
                   label: _sliderQuantityValue.round().toString(),
                   onChanged: (double value) {
@@ -920,14 +919,14 @@ class _CreatePresetState extends State<CreatePreset> {
               ),
               const Padding(padding: EdgeInsets.all(20)),
               Text(
-                  "Interval d'arrosage (en heure): ${_sliderIntervalValue.round()}"),
+                  "Interval d'arrosage (en secondes): ${_sliderIntervalValue.round()}"),
               SizedBox(
                   width: 350,
                   child: Slider(
                     value: _sliderIntervalValue,
-                    min: 1,
-                    max: 72,
-                    divisions: 71,
+                    min: 5,
+                    max: 300,
+                    divisions: 59,
                     label: _sliderIntervalValue.round().toString(),
                     onChanged: (double value) {
                       setState(() {
