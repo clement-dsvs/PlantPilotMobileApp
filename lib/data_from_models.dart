@@ -25,6 +25,7 @@ List<Message> getMessages(List<Topic> topics) {
   var topicIdIndex = 0;
   for (var i = 0; i < 6; i++) {
     if (i > 0 && i % 2 == 0) {
+      topics[topicIdIndex].messageCount = 2;
       topicIdIndex++;
     }
     messages.add(Message(ObjectId(), topics[topicIdIndex].id, "Rebecca", DateTime.now(), "Votre message ici", responseTo: null, attachedPreset: null));
